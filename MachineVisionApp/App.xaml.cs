@@ -1,14 +1,12 @@
-﻿using System.Configuration;
-using System.Data;
-using System.Windows;
+﻿using System.Windows;
 
 namespace MachineVisionApp
 {
     /// <summary>
-    /// Interaction logic for App.xaml
+    /// 应用程序入口点。
+    /// 负责应用级资源加载和启动配置。
     /// </summary>
     public partial class App : Application
     {
     }
-
 }
