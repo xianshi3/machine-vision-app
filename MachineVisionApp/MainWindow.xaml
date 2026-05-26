@@ -4,7 +4,7 @@
         xmlns:local="clr-namespace:MachineVisionApp"
         xmlns:views="clr-namespace:MachineVisionApp.Views"
         Title="{Binding Source={x:Static local:TranslationService.Instance}, Path=AppTitle}"
-        Height="760" Width="1120"
+        Height="800" Width="1120"
         WindowStartupLocation="CenterScreen"
         ResizeMode="NoResize" WindowStyle="None"
         AllowsTransparency="True"
@@ -14,6 +14,7 @@
             <RowDefinition Height="48"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
         <!-- ====== Title Bar ====== -->
@@ -22,7 +23,7 @@
         </Border>
 
         <!-- ====== Main Content ====== -->
-        <Grid Grid.Row="1" Margin="20,16,20,16">
+        <Grid Grid.Row="1" Margin="20,16,20,12">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="Auto"/>
@@ -33,7 +34,7 @@
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
-            <!-- ====== Left: Original Stream Card ====== -->
+            <!-- Left: Original Stream -->
             <Border Grid.Row="0" Grid.Column="0" Style="{StaticResource ImageCardStyle}" Padding="0">
                 <Grid>
                     <Grid.RowDefinitions>
@@ -41,8 +42,6 @@
                         <RowDefinition Height="*"/>
                         <RowDefinition Height="36"/>
                     </Grid.RowDefinitions>
-
-                    <!-- Header -->
                     <Border Grid.Row="0" Style="{StaticResource ImageCardHeaderStyle}">
                         <Grid Margin="14,0">
                             <Grid.ColumnDefinitions>
@@ -51,46 +50,35 @@
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
                             <Ellipse Grid.Column="0" Width="8" Height="8" Fill="{StaticResource SuccessBrush}" VerticalAlignment="Center" Margin="0,0,10,0"/>
-                            <TextBlock Grid.Column="1"
-                                       Text="{Binding Source={x:Static local:TranslationService.Instance}, Path=OriginalStream}"
-                                       FontSize="13" FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}"
-                                       VerticalAlignment="Center"/>
-                            <TextBlock Grid.Column="2" x:Name="CameraDataTextBlock"
-                                       Style="{StaticResource ValueStyle}" FontSize="11" Foreground="{StaticResource TextSecondaryBrush}"/>
+                            <TextBlock Grid.Column="1" Text="{Binding Source={x:Static local:TranslationService.Instance}, Path=OriginalStream}"
+                                       FontSize="13" FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}" VerticalAlignment="Center"/>
+                            <TextBlock Grid.Column="2" x:Name="CameraDataTextBlock" Style="{StaticResource ValueStyle}" FontSize="11" Foreground="{StaticResource TextSecondaryBrush}"/>
                         </Grid>
                     </Border>
-
-                    <!-- Image area -->
                     <Border Grid.Row="1" Background="{StaticResource BgBrush}" Margin="0" BorderThickness="0">
                         <Grid>
                             <Image x:Name="OriginalImage" Stretch="Uniform" Margin="6"/>
                             <Border x:Name="EmptyOverlayLeft" Background="{StaticResource BgBrush}" Visibility="Visible">
                                 <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
                                     <Ellipse Width="48" Height="48" Fill="{StaticResource CardBrush}" Margin="0,0,0,12"/>
-                                    <TextBlock Text="No Signal" Foreground="{StaticResource TextMutedBrush}"
-                                               FontSize="14" HorizontalAlignment="Center"/>
+                                    <TextBlock Text="No Signal" Foreground="{StaticResource TextMutedBrush}" FontSize="14" HorizontalAlignment="Center"/>
                                     <TextBlock x:Name="SourceInfoText" Text="{Binding Source={x:Static local:TranslationService.Instance}, Path=CameraWaiting}"
-                                               Foreground="{StaticResource TextMutedBrush}"
-                                               FontSize="11" HorizontalAlignment="Center" Margin="0,4,0,0"/>
+                                               Foreground="{StaticResource TextMutedBrush}" FontSize="11" HorizontalAlignment="Center" Margin="0,4,0,0"/>
                                 </StackPanel>
                             </Border>
                         </Grid>
                     </Border>
-
-                    <!-- Footer -->
                     <Border Grid.Row="2" Style="{StaticResource ImageCardFooterStyle}" Padding="14,0">
                         <StackPanel Orientation="Horizontal">
-                            <Ellipse x:Name="ConnectionIndicator" Width="6" Height="6" Fill="{StaticResource TextMutedBrush}"
-                                     VerticalAlignment="Center" Margin="0,0,8,0"/>
-                            <TextBlock Text="{Binding Source={x:Static local:TranslationService.Instance}, Path=StatusDisconnected}"
-                                       x:Name="StatusTextFooter"
+                            <Ellipse x:Name="ConnectionIndicator" Width="6" Height="6" Fill="{StaticResource TextMutedBrush}" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                            <TextBlock Text="{Binding Source={x:Static local:TranslationService.Instance}, Path=StatusDisconnected}" x:Name="StatusTextFooter"
                                        Style="{StaticResource LabelStyle}" FontSize="11"/>
                         </StackPanel>
                     </Border>
                 </Grid>
             </Border>
 
-            <!-- ====== Right: Edge Detection Card ====== -->
+            <!-- Right: Result View -->
             <Border Grid.Row="0" Grid.Column="2" Style="{StaticResource ImageCardStyle}" Padding="0">
                 <Grid>
                     <Grid.RowDefinitions>
@@ -98,8 +86,6 @@
                         <RowDefinition Height="*"/>
                         <RowDefinition Height="36"/>
                     </Grid.RowDefinitions>
-
-                    <!-- Header -->
                     <Border Grid.Row="0" Style="{StaticResource ImageCardHeaderStyle}">
                         <Grid Margin="14,0">
                             <Grid.ColumnDefinitions>
@@ -109,45 +95,38 @@
                             </Grid.ColumnDefinitions>
                             <Ellipse Grid.Column="0" Width="8" Height="8" Fill="{StaticResource PrimaryBrush}" VerticalAlignment="Center" Margin="0,0,10,0"/>
                             <TextBlock Grid.Column="1" Text="{Binding Source={x:Static local:TranslationService.Instance}, Path=EdgeDetection}"
-                                       FontSize="13" FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}"
-                                       VerticalAlignment="Center"/>
+                                       FontSize="13" FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}" VerticalAlignment="Center"/>
                             <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
-                                <TextBlock Text="{Binding Source={x:Static local:TranslationService.Instance}, Path=Faces}"
-                                           Style="{StaticResource LabelStyle}" FontSize="11" Margin="0,0,4,0"/>
-                                <TextBlock x:Name="FaceCountTextBlock" Text="0" FontSize="12" FontWeight="Bold"
-                                           Foreground="{StaticResource PrimaryBrush}" VerticalAlignment="Center"/>
+                                <TextBlock Text="{Binding Source={x:Static local:TranslationService.Instance}, Path=Faces}" Style="{StaticResource LabelStyle}" FontSize="11" Margin="0,0,4,0"/>
+                                <TextBlock x:Name="FaceCountTextBlock" Text="0" FontSize="12" FontWeight="Bold" Foreground="{StaticResource PrimaryBrush}" VerticalAlignment="Center"/>
+                                <TextBlock Text=" · " Foreground="{StaticResource TextMutedBrush}" FontSize="11" Margin="4,0"/>
+                                <TextBlock Text="Cnt:" Style="{StaticResource LabelStyle}" FontSize="11"/>
+                                <TextBlock x:Name="ContourCountTextBlock" Text="0" FontSize="12" FontWeight="Bold" Foreground="{StaticResource SuccessBrush}" VerticalAlignment="Center"/>
                             </StackPanel>
                         </Grid>
                     </Border>
-
-                    <!-- Image area -->
                     <Border Grid.Row="1" Background="{StaticResource BgBrush}" Margin="0" BorderThickness="0">
                         <Grid>
                             <Image x:Name="EdgeImage" Stretch="Uniform" Margin="6"/>
                             <Border x:Name="EmptyOverlayRight" Background="{StaticResource BgBrush}" Visibility="Visible">
                                 <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
                                     <Ellipse Width="48" Height="48" Fill="{StaticResource CardBrush}" Margin="0,0,0,12"/>
-                                    <TextBlock Text="No Data" Foreground="{StaticResource TextMutedBrush}"
-                                               FontSize="14" HorizontalAlignment="Center"/>
+                                    <TextBlock Text="No Data" Foreground="{StaticResource TextMutedBrush}" FontSize="14" HorizontalAlignment="Center"/>
                                 </StackPanel>
                             </Border>
                         </Grid>
                     </Border>
-
-                    <!-- Footer -->
                     <Border Grid.Row="2" Style="{StaticResource ImageCardFooterStyle}" Padding="14,0">
                         <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="Threshold:" Style="{StaticResource LabelStyle}" FontSize="11"/>
-                            <TextBlock x:Name="ThresholdInfoText" Text="100 ~ 200" Style="{StaticResource ValueStyle}"
-                                       FontSize="11" FontWeight="Normal" Margin="6,0,0,0"/>
+                            <TextBlock x:Name="ModeLabelText" Text="Canny" Style="{StaticResource ValueStyle}" FontSize="11" FontWeight="SemiBold" Foreground="{StaticResource PrimaryBrush}"/>
+                            <TextBlock x:Name="ThresholdInfoText" Text="100 ~ 200" Style="{StaticResource ValueStyle}" FontSize="11" FontWeight="Normal" Margin="8,0,0,0"/>
                         </StackPanel>
                     </Border>
                 </Grid>
             </Border>
 
             <!-- ====== Bottom Control Panel ====== -->
-            <Border Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" Style="{StaticResource ImageCardStyle}"
-                    Padding="0" Margin="0,16,0,0">
+            <Border Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" Style="{StaticResource ImageCardStyle}" Padding="0" Margin="0,12,0,0">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="48"/>
@@ -155,143 +134,134 @@
                         <RowDefinition Height="48"/>
                     </Grid.RowDefinitions>
 
-                    <!-- ====== Row 1: Connection ====== -->
-                    <Border Grid.Row="0" Background="{StaticResource SurfaceBrush}" CornerRadius="10,10,0,0"
-                            BorderBrush="{StaticResource BorderBrush}" BorderThickness="0,0,0,0">
+                    <!-- Connection -->
+                    <Border Grid.Row="0" Background="{StaticResource SurfaceBrush}" CornerRadius="10,10,0,0" BorderBrush="{StaticResource BorderBrush}" BorderThickness="0">
                         <Grid Margin="16,0">
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/><ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/><ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/><ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
-
-                            <!-- Source type -->
                             <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
-                                <TextBlock Text="{Binding Source={x:Static local:TranslationService.Instance}, Path=SourceType}"
-                                           Style="{StaticResource LabelStyle}" Margin="0,0,8,0"/>
-                                <ComboBox x:Name="SourceTypeComboBox" Width="130" SelectedIndex="0"
-                                          Style="{StaticResource ComboBoxStyle}"
-                                          SelectionChanged="SourceTypeComboBox_SelectionChanged"/>
+                                <TextBlock Text="{Binding Source={x:Static local:TranslationService.Instance}, Path=SourceType}" Style="{StaticResource LabelStyle}" Margin="0,0,8,0"/>
+                                <ComboBox x:Name="SourceTypeComboBox" Width="130" SelectedIndex="0" Style="{StaticResource ComboBoxStyle}" SelectionChanged="SourceTypeComboBox_SelectionChanged"/>
                             </StackPanel>
-
                             <Rectangle Grid.Column="1" Style="{StaticResource DividerVStyle}" Margin="16,0"/>
-
-                            <!-- Network config -->
                             <StackPanel Grid.Column="2" x:Name="NetworkConfigPanel" Orientation="Horizontal" VerticalAlignment="Center" IsEnabled="False">
-                                <TextBlock Text="{Binding Source={x:Static local:TranslationService.Instance}, Path=IPAddress}"
-                                           Style="{StaticResource LabelStyle}" Margin="0,0,6,0"/>
-                                <Border Background="{StaticResource InputBgBrush}" BorderBrush="{StaticResource BorderBrush}"
-                                        BorderThickness="1" CornerRadius="6" Margin="0,0,8,0">
-                                    <TextBox x:Name="IPTextBox" Text="192.168.1.100" Width="135"
-                                             Style="{StaticResource TextBoxStyle}" BorderThickness="0" Padding="8,5"/>
+                                <TextBlock Text="{Binding Source={x:Static local:TranslationService.Instance}, Path=IPAddress}" Style="{StaticResource LabelStyle}" Margin="0,0,6,0"/>
+                                <Border Background="{StaticResource InputBgBrush}" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" CornerRadius="6" Margin="0,0,8,0">
+                                    <TextBox x:Name="IPTextBox" Text="192.168.1.100" Width="135" Style="{StaticResource TextBoxStyle}" BorderThickness="0" Padding="8,5"/>
                                 </Border>
-                                <TextBlock Text=":" Foreground="{StaticResource TextMutedBrush}"
-                                           VerticalAlignment="Center" Margin="0,0,8,0" FontSize="14" FontWeight="Bold"/>
-                                <Border Background="{StaticResource InputBgBrush}" BorderBrush="{StaticResource BorderBrush}"
-                                        BorderThickness="1" CornerRadius="6" Margin="0,0,8,0">
-                                    <TextBox x:Name="PortTextBox" Text="8080" Width="65"
-                                             Style="{StaticResource TextBoxStyle}" BorderThickness="0" Padding="8,5"/>
+                                <TextBlock Text=":" Foreground="{StaticResource TextMutedBrush}" VerticalAlignment="Center" Margin="0,0,8,0" FontSize="14" FontWeight="Bold"/>
+                                <Border Background="{StaticResource InputBgBrush}" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" CornerRadius="6" Margin="0,0,8,0">
+                                    <TextBox x:Name="PortTextBox" Text="8080" Width="65" Style="{StaticResource TextBoxStyle}" BorderThickness="0" Padding="8,5"/>
                                 </Border>
-                                <TextBlock Text="{Binding Source={x:Static local:TranslationService.Instance}, Path=RTSPHint}"
-                                           Foreground="{StaticResource TextMutedBrush}" FontSize="10"
-                                           VerticalAlignment="Center" Margin="0,0,8,0"/>
                             </StackPanel>
-
-                            <!-- Connect/Disconnect -->
                             <StackPanel Grid.Column="3" Orientation="Horizontal" VerticalAlignment="Center">
-                                <Button x:Name="ConnectButton"
-                                        Content="{Binding Source={x:Static local:TranslationService.Instance}, Path=Connect}"
-                                        Style="{StaticResource PrimaryButtonStyle}" Padding="16,6" FontSize="12"
-                                        Click="ConnectButton_Click"/>
-                                <Button x:Name="DisconnectButton"
-                                        Content="{Binding Source={x:Static local:TranslationService.Instance}, Path=Disconnect}"
-                                        Style="{StaticResource DangerButtonStyle}" Padding="16,6" FontSize="12"
-                                        Margin="6,0,0,0" IsEnabled="False"
-                                        Click="DisconnectButton_Click"/>
+                                <Button x:Name="ConnectButton" Content="{Binding Source={x:Static local:TranslationService.Instance}, Path=Connect}" Style="{StaticResource PrimaryButtonStyle}" Padding="16,6" FontSize="12" Click="ConnectButton_Click"/>
+                                <Button x:Name="DisconnectButton" Content="{Binding Source={x:Static local:TranslationService.Instance}, Path=Disconnect}" Style="{StaticResource DangerButtonStyle}" Padding="16,6" FontSize="12" Margin="6,0,0,0" IsEnabled="False" Click="DisconnectButton_Click"/>
                             </StackPanel>
-
-                            <!-- Status -->
                             <StackPanel Grid.Column="4" Orientation="Horizontal" VerticalAlignment="Center" Margin="16,0,0,0">
-                                <Ellipse x:Name="StatusIndicator" Width="8" Height="8"
-                                         Fill="{StaticResource TextMutedBrush}"
-                                         VerticalAlignment="Center" Margin="0,0,8,0"/>
-                                <TextBlock x:Name="StatusText" Foreground="{StaticResource TextSecondaryBrush}"
-                                           FontSize="11" VerticalAlignment="Center"/>
+                                <Ellipse x:Name="StatusIndicator" Width="8" Height="8" Fill="{StaticResource TextMutedBrush}" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                                <TextBlock x:Name="StatusText" Foreground="{StaticResource TextSecondaryBrush}" FontSize="11" VerticalAlignment="Center"/>
                             </StackPanel>
-
-                            <!-- Error -->
-                            <Border Grid.Column="7" x:Name="ErrorBorder" Visibility="Collapsed"
-                                    Background="{StaticResource DangerDimBrush}" BorderBrush="{StaticResource DangerBrush}"
-                                    BorderThickness="1" CornerRadius="6" Padding="10,4" VerticalAlignment="Center"
-                                    MaxWidth="280">
-                                <TextBlock x:Name="ErrorMessageTextBlock" Text="" FontSize="11"
-                                           Foreground="{StaticResource DangerBrush}" VerticalAlignment="Center"
-                                           TextTrimming="CharacterEllipsis"/>
+                            <Border Grid.Column="7" x:Name="ErrorBorder" Visibility="Collapsed" Background="{StaticResource DangerDimBrush}" BorderBrush="{StaticResource DangerBrush}" BorderThickness="1" CornerRadius="6" Padding="10,4" VerticalAlignment="Center" MaxWidth="260">
+                                <TextBlock x:Name="ErrorMessageTextBlock" Text="" FontSize="11" Foreground="{StaticResource DangerBrush}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
                             </Border>
                         </Grid>
                     </Border>
 
-                    <!-- Divider -->
                     <Rectangle Grid.Row="1" Fill="{StaticResource BorderBrush}"/>
 
-                    <!-- ====== Row 2: Processing Controls ====== -->
+                    <!-- Processing Controls -->
                     <Border Grid.Row="2" Background="{StaticResource SurfaceBrush}" CornerRadius="0,0,10,10">
                         <Grid Margin="16,0">
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/><ColumnDefinition Width="Auto"/><ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
 
-                            <!-- Canny Threshold -->
+                            <!-- Mode + Actions -->
                             <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
-                                <TextBlock Text="{Binding Source={x:Static local:TranslationService.Instance}, Path=CannyThreshold}"
-                                           Style="{StaticResource LabelStyle}" Margin="0,0,10,0"/>
-                                <Border Background="{StaticResource InputBgBrush}" BorderBrush="{StaticResource BorderBrush}"
-                                        BorderThickness="1" CornerRadius="6" Margin="0,0,6,0">
-                                    <TextBox x:Name="Threshold1TextBox" Text="100" Width="55"
-                                             Style="{StaticResource TextBoxStyle}" BorderThickness="0" Padding="8,5"/>
-                                </Border>
-                                <TextBlock Text="{Binding Source={x:Static local:TranslationService.Instance}, Path=ThresholdSeparator}"
-                                           Foreground="{StaticResource TextSecondaryBrush}" VerticalAlignment="Center" Margin="0,0,6,0"/>
-                                <Border Background="{StaticResource InputBgBrush}" BorderBrush="{StaticResource BorderBrush}"
-                                        BorderThickness="1" CornerRadius="6" Margin="0,0,8,0">
-                                    <TextBox x:Name="Threshold2TextBox" Text="200" Width="55"
-                                             Style="{StaticResource TextBoxStyle}" BorderThickness="0" Padding="8,5"/>
-                                </Border>
-                                <Button x:Name="ApplyThresholdsButton"
-                                        Content="{Binding Source={x:Static local:TranslationService.Instance}, Path=Apply}"
-                                        Style="{StaticResource PrimaryButtonStyle}" Padding="14,6" FontSize="12"/>
+                                <TextBlock Text="{Binding Source={x:Static local:TranslationService.Instance}, Path=ProcessingMode}" Style="{StaticResource LabelStyle}" Margin="0,0,8,0"/>
+                                <ComboBox x:Name="ProcessingModeComboBox" Width="140" SelectedIndex="0" Style="{StaticResource ComboBoxStyle}" SelectionChanged="ProcessingModeComboBox_SelectionChanged"/>
                             </StackPanel>
 
-                            <!-- Divider -->
-                            <Rectangle Grid.Column="1" Style="{StaticResource DividerVStyle}" Margin="16,0"/>
+                            <Rectangle Grid.Column="1" Style="{StaticResource DividerVStyle}" Margin="12,0"/>
 
-                            <!-- Action Buttons -->
-                            <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
-                                <Button x:Name="StartCameraButton"
-                                        Content="{Binding Source={x:Static local:TranslationService.Instance}, Path=StartCamera}"
-                                        Style="{StaticResource PrimaryButtonStyle}" Margin="0,0,6,0" Padding="16,8"
-                                        Click="StartCameraButton_Click"/>
-                                <Button x:Name="StopCameraButton"
-                                        Content="{Binding Source={x:Static local:TranslationService.Instance}, Path=StopCamera}"
-                                        Style="{StaticResource DangerButtonStyle}" Margin="0,0,6,0" Padding="16,8"
-                                        IsEnabled="False" Click="StopCameraButton_Click"/>
-                                <Button x:Name="LoadImageButton"
-                                        Content="{Binding Source={x:Static local:TranslationService.Instance}, Path=LoadImage}"
-                                        Style="{StaticResource SecondaryButtonStyle}" Padding="16,8"
-                                        Click="LoadImageButton_Click"/>
+                            <!-- Canny Threshold (shown in Canny/Contour modes) -->
+                            <StackPanel x:Name="ThresholdPanel" Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+                                <TextBlock Text="{Binding Source={x:Static local:TranslationService.Instance}, Path=CannyThreshold}" Style="{StaticResource LabelStyle}" Margin="0,0,8,0"/>
+                                <Border Background="{StaticResource InputBgBrush}" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" CornerRadius="6" Margin="0,0,4,0">
+                                    <TextBox x:Name="Threshold1TextBox" Text="100" Width="50" Style="{StaticResource TextBoxStyle}" BorderThickness="0" Padding="8,5"/>
+                                </Border>
+                                <TextBlock Text="{Binding Source={x:Static local:TranslationService.Instance}, Path=ThresholdSeparator}" Foreground="{StaticResource TextSecondaryBrush}" VerticalAlignment="Center" Margin="0,0,4,0"/>
+                                <Border Background="{StaticResource InputBgBrush}" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" CornerRadius="6" Margin="0,0,6,0">
+                                    <TextBox x:Name="Threshold2TextBox" Text="200" Width="50" Style="{StaticResource TextBoxStyle}" BorderThickness="0" Padding="8,5"/>
+                                </Border>
+                                <Button x:Name="ApplyThresholdsButton" Content="{Binding Source={x:Static local:TranslationService.Instance}, Path=Apply}" Style="{StaticResource PrimaryButtonStyle}" Padding="12,6" FontSize="12"/>
+                            </StackPanel>
+
+                            <Rectangle Grid.Column="3" Style="{StaticResource DividerVStyle}" Margin="12,0"/>
+
+                            <!-- Main Actions -->
+                            <StackPanel Grid.Column="4" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Right">
+                                <Button x:Name="SaveScreenshotButton" Content="{Binding Source={x:Static local:TranslationService.Instance}, Path=SaveScreenshot}" Style="{StaticResource SecondaryButtonStyle}" Padding="12,8" Click="SaveScreenshotButton_Click"/>
+                                <Button x:Name="RecordButton" Content="{Binding Source={x:Static local:TranslationService.Instance}, Path=StartRecording}" Style="{StaticResource DangerButtonStyle}" Padding="12,8" Margin="6,0" Click="RecordButton_Click"/>
+                                <Rectangle Style="{StaticResource DividerVStyle}" Margin="4,0"/>
+                                <Button x:Name="StartCameraButton" Content="{Binding Source={x:Static local:TranslationService.Instance}, Path=StartCamera}" Style="{StaticResource PrimaryButtonStyle}" Margin="6,0,4,0" Padding="14,8" Click="StartCameraButton_Click"/>
+                                <Button x:Name="StopCameraButton" Content="{Binding Source={x:Static local:TranslationService.Instance}, Path=StopCamera}" Style="{StaticResource DangerButtonStyle}" Margin="0,0,4,0" Padding="14,8" IsEnabled="False" Click="StopCameraButton_Click"/>
+                                <Button x:Name="LoadImageButton" Content="{Binding Source={x:Static local:TranslationService.Instance}, Path=LoadImage}" Style="{StaticResource SecondaryButtonStyle}" Padding="14,8" Click="LoadImageButton_Click"/>
                             </StackPanel>
                         </Grid>
                     </Border>
                 </Grid>
             </Border>
         </Grid>
+
+        <!-- ====== Status Bar ====== -->
+        <Border Grid.Row="2" Background="{StaticResource SurfaceBrush}" BorderBrush="{StaticResource BorderBrush}" BorderThickness="0,1,0,0" Padding="16,4" Height="30">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="0" x:Name="FpsTextBlock" Text="0 FPS" Foreground="{StaticResource TextSecondaryBrush}" FontSize="11" VerticalAlignment="Center"/>
+                <TextBlock Grid.Column="1" Text="·" Foreground="{StaticResource TextMutedBrush}" FontSize="11" Margin="8,0" VerticalAlignment="Center"/>
+                <TextBlock Grid.Column="2" x:Name="ProcessTimeTextBlock" Text="0 ms" Foreground="{StaticResource TextSecondaryBrush}" FontSize="11" VerticalAlignment="Center"/>
+                <Button Grid.Column="4" x:Name="LogToggleButton" Content="{Binding Source={x:Static local:TranslationService.Instance}, Path=Log}" Style="{StaticResource SecondaryButtonStyle}" Padding="10,2" FontSize="11" Click="LogToggleButton_Click"/>
+            </Grid>
+        </Border>
+
+        <!-- ====== Log Panel (collapsible) ====== -->
+        <Border Grid.Row="3" x:Name="LogPanel" Background="{StaticResource SurfaceBrush}" BorderBrush="{StaticResource BorderBrush}" BorderThickness="0,1,0,0" Padding="8,4" Height="140" Visibility="Collapsed">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <Grid Grid.Row="0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0" Text="{Binding Source={x:Static local:TranslationService.Instance}, Path=Log}" Foreground="{StaticResource TextSecondaryBrush}" FontSize="11" FontWeight="Bold" VerticalAlignment="Center"/>
+                    <Button Grid.Column="1" Content="{Binding Source={x:Static local:TranslationService.Instance}, Path=ClearLog}" Style="{StaticResource SecondaryButtonStyle}" Padding="8,1" FontSize="10" Click="ClearLogButton_Click"/>
+                </Grid>
+                <ListBox Grid.Row="1" x:Name="LogListBox" Background="{StaticResource BgBrush}" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1"
+                         Foreground="{StaticResource TextSecondaryBrush}" FontSize="11" FontFamily="Consolas"
+                         ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding DisplayText}" Foreground="{StaticResource TextSecondaryBrush}" FontSize="11"/>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </Grid>
+        </Border>
     </Grid>
 </Window>
