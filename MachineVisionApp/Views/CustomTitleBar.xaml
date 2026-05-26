@@ -3,90 +3,68 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:MachineVisionApp"
              mc:Ignorable="d" 
-             d:DesignHeight="40" d:DesignWidth="800"
-             Height="40">
-    <UserControl.Resources>
-        <!-- 定义按钮样式 -->
-        <Style x:Key="TitleBarButtonStyle" TargetType="Button">
-            <Setter Property="Background" Value="Transparent"/>
-            <Setter Property="Foreground" Value="#CCCCCC"/>
-            <Setter Property="FontSize" Value="14"/>
-            <Setter Property="FontWeight" Value="Bold"/>
-            <Setter Property="Padding" Value="10,5"/>
-            <Setter Property="Margin" Value="0,0,15,0"/>
-            <Setter Property="ToolTipService.ShowDuration" Value="2000"/>
-            <Setter Property="ToolTipService.InitialShowDelay" Value="500"/>
-            <Setter Property="BorderBrush" Value="Transparent"/>
-            <Setter Property="BorderThickness" Value="0"/>
-            <Setter Property="Cursor" Value="Hand"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Button">
-                        <Border Background="{TemplateBinding Background}"
-                                BorderBrush="{TemplateBinding BorderBrush}"
-                                BorderThickness="{TemplateBinding BorderThickness}"
-                                CornerRadius="4">
-                            <ContentPresenter HorizontalAlignment="Center"
-                                              VerticalAlignment="Center"/>
-                        </Border>
-                        <ControlTemplate.Triggers>
-                            <!-- 鼠标悬停效果 -->
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter Property="Background" Value="#37474F"/>
-                                <Setter Property="Foreground" Value="#FFFFFF"/>
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-    </UserControl.Resources>
-    <Grid Background="#1E1E1E" MouseLeftButtonDown="Grid_MouseLeftButtonDown">
+             d:DesignHeight="48" d:DesignWidth="1100"
+             Height="48">
+    <Grid Background="#161B22" MouseLeftButtonDown="Grid_MouseLeftButtonDown">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
-        <!-- 标题文本 -->
-        <TextBlock x:Name="TitleText"
-                   Text="机器视觉应用"
-                   FontSize="16"
-                   FontWeight="SemiBold"
-                   Foreground="#CCCCCC"
-                   VerticalAlignment="Center"
-                   Margin="15,0,0,0"
-                   Grid.Column="0"
-                   MinWidth="150"
-                   MaxWidth="300"
-                   TextTrimming="CharacterEllipsis"/>
-        <!-- 按钮容器 -->
-        <StackPanel Orientation="Horizontal"
-                    HorizontalAlignment="Right"
-                    VerticalAlignment="Center"
-                    Margin="0,0,15,0"
-                    Grid.Column="2">
-            <!-- 最小化按钮 -->
+
+        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="16,0,0,0" Grid.Column="0">
+            <Border Background="#21262D" CornerRadius="6" Width="28" Height="28" Margin="0,0,10,0">
+                <TextBlock Text="MV" FontSize="12" FontWeight="Bold" Foreground="#58A6FF"
+                           HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            </Border>
+            <TextBlock Text="{Binding Source={x:Static local:TranslationService.Instance}, Path=MachineVision}"
+                       FontSize="15" FontWeight="SemiBold" Foreground="#C9D1D9" VerticalAlignment="Center"/>
+        </StackPanel>
+
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,8,0" Grid.Column="2">
+            <!-- Language Switch -->
+            <Button x:Name="LanguageSwitchButton"
+                    Style="{StaticResource TitleBarButtonStyle}"
+                    Content="中/EN"
+                    Click="LanguageSwitchButton_Click"
+                    ToolTip="Switch Language"
+                    FontSize="12"
+                    Width="48" Height="32"/>
+
             <Button x:Name="MinimizeButton"
                     Style="{StaticResource TitleBarButtonStyle}"
                     Content="&#xE921;"
                     Click="MinimizeButton_Click"
-                    ToolTip="最小化"
-                    FontFamily="Segoe MDL2 Assets"/>
-            <!-- 最大化/还原按钮 -->
+                    ToolTip="{Binding Source={x:Static local:TranslationService.Instance}, Path=Minimize}"
+                    FontFamily="Segoe MDL2 Assets"
+                    Width="46" Height="32"/>
             <Button x:Name="MaximizeButton"
                     Style="{StaticResource TitleBarButtonStyle}"
                     Content="&#xE922;"
                     Click="MaximizeButton_Click"
-                    ToolTip="最大化"
-                    FontFamily="Segoe MDL2 Assets"/>
-            <!-- 关闭按钮 -->
+                    ToolTip="{Binding Source={x:Static local:TranslationService.Instance}, Path=Maximize}"
+                    FontFamily="Segoe MDL2 Assets"
+                    Width="46" Height="32"/>
             <Button x:Name="CloseButton"
                     Style="{StaticResource TitleBarButtonStyle}"
                     Content="&#xE8BB;"
                     Click="CloseButton_Click"
-                    ToolTip="关闭"
-                    FontFamily="Segoe MDL2 Assets"/>
+                    ToolTip="{Binding Source={x:Static local:TranslationService.Instance}, Path=Close}"
+                    FontFamily="Segoe MDL2 Assets"
+                    Width="46" Height="32">
+                <Button.Resources>
+                    <Style TargetType="Button" BasedOn="{StaticResource TitleBarButtonStyle}">
+                        <Style.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#F85149"/>
+                                <Setter Property="Foreground" Value="#FFFFFF"/>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Resources>
+            </Button>
         </StackPanel>
     </Grid>
 </UserControl>
