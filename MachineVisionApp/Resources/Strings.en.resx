@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly" msdata:Ordinal="1">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data" msdata:Ordinal="2">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AppTitle" xml:space="preserve">
+    <value>Machine Vision App</value>
+  </data>
+  <data name="OriginalStream" xml:space="preserve">
+    <value>Original Stream</value>
+  </data>
+  <data name="EdgeDetection" xml:space="preserve">
+    <value>Edge Detection</value>
+  </data>
+  <data name="Camera" xml:space="preserve">
+    <value>Camera</value>
+  </data>
+  <data name="CameraWaiting" xml:space="preserve">
+    <value>Waiting...</value>
+  </data>
+  <data name="Faces" xml:space="preserve">
+    <value>Faces</value>
+  </data>
+  <data name="CannyThreshold" xml:space="preserve">
+    <value>Canny Threshold</value>
+  </data>
+  <data name="ThresholdSeparator" xml:space="preserve">
+    <value>~</value>
+  </data>
+  <data name="Apply" xml:space="preserve">
+    <value>Apply</value>
+  </data>
+  <data name="StartCamera" xml:space="preserve">
+    <value>Start Camera</value>
+  </data>
+  <data name="StopCamera" xml:space="preserve">
+    <value>Stop Camera</value>
+  </data>
+  <data name="LoadImage" xml:space="preserve">
+    <value>Load Image</value>
+  </data>
+  <data name="ImageFilter" xml:space="preserve">
+    <value>Image Files|*.jpg;*.jpeg;*.png;*.bmp|All Files|*.*</value>
+  </data>
+  <data name="CameraStopped" xml:space="preserve">
+    <value>Camera stopped</value>
+  </data>
+  <data name="FailedLoadImage" xml:space="preserve">
+    <value>Failed to load image!</value>
+  </data>
+  <data name="FrameProcessError" xml:space="preserve">
+    <value>Frame processing error</value>
+  </data>
+  <data name="ImageProcessError" xml:space="preserve">
+    <value>Image processing error</value>
+  </data>
+  <data name="UnknownError" xml:space="preserve">
+    <value>Unknown error</value>
+  </data>
+  <data name="CameraOpenError" xml:space="preserve">
+    <value>Cannot open camera. Check device connection.</value>
+  </data>
+  <data name="CameraError" xml:space="preserve">
+    <value>Camera error</value>
+  </data>
+  <data name="InvalidThreshold" xml:space="preserve">
+    <value>Please enter valid integers for thresholds!</value>
+  </data>
+  <data name="Minimize" xml:space="preserve">
+    <value>Minimize</value>
+  </data>
+  <data name="Maximize" xml:space="preserve">
+    <value>Maximize</value>
+  </data>
+  <data name="Close" xml:space="preserve">
+    <value>Close</value>
+  </data>
+  <data name="MachineVision" xml:space="preserve">
+    <value>Machine Vision App</value>
+  </data>
+  <data name="SourceType" xml:space="preserve">
+    <value>Source</value>
+  </data>
+  <data name="LocalCamera" xml:space="preserve">
+    <value>Local Camera</value>
+  </data>
+  <data name="NetworkStream" xml:space="preserve">
+    <value>Network Stream</value>
+  </data>
+  <data name="IPAddress" xml:space="preserve">
+    <value>IP Address</value>
+  </data>
+  <data name="Port" xml:space="preserve">
+    <value>Port</value>
+  </data>
+  <data name="Connect" xml:space="preserve">
+    <value>Connect</value>
+  </data>
+  <data name="Disconnect" xml:space="preserve">
+    <value>Disconnect</value>
+  </data>
+  <data name="ConnectionStatus" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="StatusConnected" xml:space="preserve">
+    <value>Connected</value>
+  </data>
+  <data name="StatusDisconnected" xml:space="preserve">
+    <value>Disconnected</value>
+  </data>
+  <data name="StatusConnecting" xml:space="preserve">
+    <value>Connecting...</value>
+  </data>
+  <data name="StatusFailed" xml:space="preserve">
+    <value>Connection Failed</value>
+  </data>
+  <data name="RTSPHint" xml:space="preserve">
+    <value>Supports rtsp:// or http:// URLs</value>
+  </data>
+</root>
