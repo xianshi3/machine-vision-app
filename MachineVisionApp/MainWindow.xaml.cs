@@ -31,6 +31,7 @@ namespace MachineVisionApp
         private int _threshold2 = 200;
         private bool _networkConfigured;
         private string? _lastDecodedText; // 最近一次记录到日志的识别文本（去重）
+        private bool _suppressSelectionEvents; // 语言切换重建下拉框时抑制 SelectionChanged 副作用
 
         // ---- 性能追踪 ----
         private readonly Stopwatch _frameStopwatch = new();
@@ -64,8 +65,92 @@ namespace MachineVisionApp
 
             _thresholdParameterComponent.OnThresholdsChanged += UpdateThresholds;
 
+            TranslationService.Instance.PropertyChanged += OnLanguageChangedHandler;
+
             Loaded += MainWindow_Loaded;
             Closed += MainWindow_Closed;
+        }
+
+        /// <summary>
+        /// 语言切换处理：重建所有本地化控件文本。
+        /// </summary>
+        private void OnLanguageChangedHandler(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            Dispatcher.Invoke(RefreshLocalizedControls);
+        }
+
+        /// <summary>
+        /// 重建下拉框等代码设置的本地化文本（初始加载和语言切换时调用）。
+        /// </summary>
+        private void RefreshLocalizedControls()
+        {
+            _suppressSelectionEvents = true;
+            try
+            {
+                int srcIndex = SourceTypeComboBox.SelectedIndex;
+                SourceTypeComboBox.ItemsSource = new string[]
+                {
+                    TranslationService.Instance.LocalCamera,
+                    TranslationService.Instance.NetworkStream
+                };
+                SourceTypeComboBox.SelectedIndex = srcIndex < 0 ? 0 : srcIndex;
+
+                int modeIndex = ProcessingModeComboBox.SelectedIndex;
+                ProcessingModeComboBox.ItemsSource = new string[]
+                {
+                    TranslationService.Instance.ModeCanny,
+                    TranslationService.Instance.ModeSobel,
+                    TranslationService.Instance.ModeLaplacian,
+                    TranslationService.Instance.ModeBinary,
+                    TranslationService.Instance.ModeContour,
+                    TranslationService.Instance.ModeQRCode,
+                    TranslationService.Instance.ModeColorDetection,
+                    TranslationService.Instance.ModeTemplateMatch
+                };
+                ProcessingModeComboBox.SelectedIndex = modeIndex < 0 ? 0 : modeIndex;
+
+                int colorIndex = ColorComboBox.SelectedIndex;
+                ColorComboBox.ItemsSource = TranslationService.Instance.ColorNames;
+                ColorComboBox.SelectedIndex = colorIndex < 0 ? 0 : colorIndex;
+            }
+            finally
+            {
+                _suppressSelectionEvents = false;
+            }
+
+            ModeLabelText.Text = GetModeName(_currentMode);
+            ResultTitleText.Text = GetResultTitle(_currentMode);
+            TemplateStatusText.Text = _templateMatchComponent.HasTemplate
+                ? $"{TranslationService.Instance.TemplateLoaded} ({_templateMatchComponent.TemplateWidth}x{_templateMatchComponent.TemplateHeight})"
+                : TranslationService.Instance.NoTemplate;
+        }
+
+        /// <summary>获取模式显示名称</summary>
+        private string GetModeName(Components.ProcessingMode mode)
+        {
+            return mode switch
+            {
+                Components.ProcessingMode.Sobel => TranslationService.Instance.ModeSobel,
+                Components.ProcessingMode.Laplacian => TranslationService.Instance.ModeLaplacian,
+                Components.ProcessingMode.Binary => TranslationService.Instance.ModeBinary,
+                Components.ProcessingMode.Contour => TranslationService.Instance.ModeContour,
+                Components.ProcessingMode.QRCode => TranslationService.Instance.ModeQRCode,
+                Components.ProcessingMode.ColorDetection => TranslationService.Instance.ModeColorDetection,
+                Components.ProcessingMode.TemplateMatch => TranslationService.Instance.ModeTemplateMatch,
+                _ => TranslationService.Instance.ModeCanny
+            };
+        }
+
+        /// <summary>获取结果面板标题</summary>
+        private string GetResultTitle(Components.ProcessingMode mode)
+        {
+            return mode switch
+            {
+                Components.ProcessingMode.QRCode => TranslationService.Instance.ModeQRCode,
+                Components.ProcessingMode.ColorDetection => TranslationService.Instance.ModeColorDetection,
+                Components.ProcessingMode.TemplateMatch => TranslationService.Instance.ModeTemplateMatch,
+                _ => TranslationService.Instance.ResultView
+            };
         }
 
         /// <summary>
@@ -73,30 +158,10 @@ namespace MachineVisionApp
         /// </summary>
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            SourceTypeComboBox.ItemsSource = new string[]
-            {
-                TranslationService.Instance.LocalCamera,
-                TranslationService.Instance.NetworkStream
-            };
-            SourceTypeComboBox.SelectedIndex = 0;
+            RefreshLocalizedControls();
+
             NetworkConfigPanel.IsEnabled = false;
             NetworkConfigPanel.Opacity = 0.4;
-
-            ProcessingModeComboBox.ItemsSource = new string[]
-            {
-                TranslationService.Instance.ModeCanny,
-                TranslationService.Instance.ModeSobel,
-                TranslationService.Instance.ModeLaplacian,
-                TranslationService.Instance.ModeBinary,
-                TranslationService.Instance.ModeContour,
-                TranslationService.Instance.ModeQRCode,
-                TranslationService.Instance.ModeColorDetection,
-                TranslationService.Instance.ModeTemplateMatch
-            };
-            ProcessingModeComboBox.SelectedIndex = 0;
-
-            ColorComboBox.ItemsSource = TranslationService.Instance.ColorNames;
-            ColorComboBox.SelectedIndex = 0;
 
             LogListBox.ItemsSource = AppLogger.Instance.Entries;
 
@@ -123,6 +188,8 @@ namespace MachineVisionApp
         /// </summary>
         private void SourceTypeComboBox_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
+            if (_suppressSelectionEvents) return;
+
             bool isNetwork = SourceTypeComboBox.SelectedIndex == 1;
             NetworkConfigPanel.IsEnabled = isNetwork;
             NetworkConfigPanel.Opacity = isNetwork ? 1.0 : 0.4;
@@ -212,6 +279,8 @@ namespace MachineVisionApp
         /// </summary>
         private void ProcessingModeComboBox_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
+            if (_suppressSelectionEvents) return;
+
             _currentMode = ProcessingModeComboBox.SelectedIndex switch
             {
                 1 => Components.ProcessingMode.Sobel,
@@ -224,17 +293,7 @@ namespace MachineVisionApp
                 _ => Components.ProcessingMode.Canny
             };
 
-            ModeLabelText.Text = _currentMode switch
-            {
-                Components.ProcessingMode.Sobel => TranslationService.Instance.ModeSobel,
-                Components.ProcessingMode.Laplacian => TranslationService.Instance.ModeLaplacian,
-                Components.ProcessingMode.Binary => TranslationService.Instance.ModeBinary,
-                Components.ProcessingMode.Contour => TranslationService.Instance.ModeContour,
-                Components.ProcessingMode.QRCode => TranslationService.Instance.ModeQRCode,
-                Components.ProcessingMode.ColorDetection => TranslationService.Instance.ModeColorDetection,
-                Components.ProcessingMode.TemplateMatch => TranslationService.Instance.ModeTemplateMatch,
-                _ => TranslationService.Instance.ModeCanny
-            };
+            ModeLabelText.Text = GetModeName(_currentMode);
 
             bool showThreshold = _currentMode is Components.ProcessingMode.Canny or Components.ProcessingMode.Contour;
             ThresholdPanel.Visibility = showThreshold ? Visibility.Visible : Visibility.Collapsed;
@@ -243,13 +302,7 @@ namespace MachineVisionApp
             TemplatePanel.Visibility = _currentMode == Components.ProcessingMode.TemplateMatch
                 ? Visibility.Visible : Visibility.Collapsed;
 
-            ResultTitleText.Text = _currentMode switch
-            {
-                Components.ProcessingMode.QRCode => TranslationService.Instance.ModeQRCode,
-                Components.ProcessingMode.ColorDetection => TranslationService.Instance.ModeColorDetection,
-                Components.ProcessingMode.TemplateMatch => TranslationService.Instance.ModeTemplateMatch,
-                _ => TranslationService.Instance.ResultView
-            };
+            ResultTitleText.Text = GetResultTitle(_currentMode);
 
             _lastDecodedText = null;
             ModeResultTextBlock.Text = "";
@@ -261,6 +314,8 @@ namespace MachineVisionApp
         /// </summary>
         private void ColorComboBox_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
+            if (_suppressSelectionEvents) return;
+
             _colorDetectionComponent.Target = ColorComboBox.SelectedIndex switch
             {
                 1 => Components.ColorDetectionComponent.TargetColor.Green,

@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:MachineVisionApp"
+             xmlns:shell="clr-namespace:System.Windows.Shell;assembly=PresentationFramework"
              mc:Ignorable="d" 
              d:DesignHeight="48" d:DesignWidth="1100"
              Height="48">
@@ -23,13 +24,14 @@
                        FontSize="15" FontWeight="SemiBold" Foreground="#C9D1D9" VerticalAlignment="Center"/>
         </StackPanel>
 
-        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,8,0" Grid.Column="2">
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,8,0" Grid.Column="2"
+                    shell:WindowChrome.IsHitTestVisibleInChrome="True">
             <!-- Language Switch -->
             <Button x:Name="LanguageSwitchButton"
                     Style="{StaticResource TitleBarButtonStyle}"
-                    Content="中/EN"
+                    Content="EN/中"
                     Click="LanguageSwitchButton_Click"
-                    ToolTip="Switch Language"
+                    ToolTip="Switch Language / 切换语言"
                     FontSize="12"
                     Width="48" Height="32"/>
 
