@@ -21,12 +21,16 @@ namespace MachineVisionApp
         private Components.FaceDetectionComponent _faceDetectionComponent;
         private Components.ImageProcessingComponent _imageProcessingComponent;
         private Components.RecordingComponent _recordingComponent;
+        private Components.BarcodeDetectionComponent _barcodeDetectionComponent;
+        private Components.ColorDetectionComponent _colorDetectionComponent;
+        private Components.TemplateMatchComponent _templateMatchComponent;
 
         // ---- 处理参数 ----
         private Components.ProcessingMode _currentMode = Components.ProcessingMode.Canny;
         private int _threshold1 = 100;
         private int _threshold2 = 200;
         private bool _networkConfigured;
+        private string? _lastDecodedText; // 最近一次记录到日志的识别文本（去重）
 
         // ---- 性能追踪 ----
         private readonly Stopwatch _frameStopwatch = new();
@@ -41,13 +45,17 @@ namespace MachineVisionApp
         {
             InitializeComponent();
 
-            _faceDetectionComponent = new Components.FaceDetectionComponent("haarcascade_frontalface_default.xml");
+            _faceDetectionComponent = new Components.FaceDetectionComponent(
+                System.IO.Path.Combine(AppContext.BaseDirectory, "haarcascade_frontalface_default.xml"));
             _imageProcessingComponent = new Components.ImageProcessingComponent();
             _videoCaptureComponent = new Components.VideoCaptureComponent();
             _imageDisplayComponent = new Components.ImageDisplayComponent(OriginalImage, EdgeImage);
             _thresholdParameterComponent = new Components.ThresholdParameterComponent(
                 Threshold1TextBox, Threshold2TextBox, ApplyThresholdsButton);
             _recordingComponent = new Components.RecordingComponent();
+            _barcodeDetectionComponent = new Components.BarcodeDetectionComponent();
+            _colorDetectionComponent = new Components.ColorDetectionComponent();
+            _templateMatchComponent = new Components.TemplateMatchComponent();
 
             _videoCaptureComponent.OnFrameCaptured += ProcessFrame;
             _videoCaptureComponent.OnCaptureStopped += OnCaptureStoppedHandler;
@@ -80,11 +88,24 @@ namespace MachineVisionApp
                 TranslationService.Instance.ModeSobel,
                 TranslationService.Instance.ModeLaplacian,
                 TranslationService.Instance.ModeBinary,
-                TranslationService.Instance.ModeContour
+                TranslationService.Instance.ModeContour,
+                TranslationService.Instance.ModeQRCode,
+                TranslationService.Instance.ModeColorDetection,
+                TranslationService.Instance.ModeTemplateMatch
             };
             ProcessingModeComboBox.SelectedIndex = 0;
 
+            ColorComboBox.ItemsSource = TranslationService.Instance.ColorNames;
+            ColorComboBox.SelectedIndex = 0;
+
             LogListBox.ItemsSource = AppLogger.Instance.Entries;
+
+            // 新日志自动滚动到底部
+            AppLogger.Instance.OnLogAdded += entry => Dispatcher.Invoke(() =>
+            {
+                if (LogPanel.Visibility == Visibility.Visible)
+                    LogListBox.ScrollIntoView(entry);
+            });
         }
 
         /// <summary>
@@ -94,6 +115,7 @@ namespace MachineVisionApp
         {
             _recordingComponent.Dispose();
             _videoCaptureComponent.Dispose();
+            _templateMatchComponent.Clear();
         }
 
         /// <summary>
@@ -186,7 +208,7 @@ namespace MachineVisionApp
         }
 
         /// <summary>
-        /// 处理模式切换：更新当前处理模式，显示/隐藏阈值面板。
+        /// 处理模式切换：更新当前处理模式，显示/隐藏对应的参数面板。
         /// </summary>
         private void ProcessingModeComboBox_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
@@ -196,6 +218,9 @@ namespace MachineVisionApp
                 2 => Components.ProcessingMode.Laplacian,
                 3 => Components.ProcessingMode.Binary,
                 4 => Components.ProcessingMode.Contour,
+                5 => Components.ProcessingMode.QRCode,
+                6 => Components.ProcessingMode.ColorDetection,
+                7 => Components.ProcessingMode.TemplateMatch,
                 _ => Components.ProcessingMode.Canny
             };
 
@@ -205,13 +230,74 @@ namespace MachineVisionApp
                 Components.ProcessingMode.Laplacian => TranslationService.Instance.ModeLaplacian,
                 Components.ProcessingMode.Binary => TranslationService.Instance.ModeBinary,
                 Components.ProcessingMode.Contour => TranslationService.Instance.ModeContour,
+                Components.ProcessingMode.QRCode => TranslationService.Instance.ModeQRCode,
+                Components.ProcessingMode.ColorDetection => TranslationService.Instance.ModeColorDetection,
+                Components.ProcessingMode.TemplateMatch => TranslationService.Instance.ModeTemplateMatch,
                 _ => TranslationService.Instance.ModeCanny
             };
 
             bool showThreshold = _currentMode is Components.ProcessingMode.Canny or Components.ProcessingMode.Contour;
             ThresholdPanel.Visibility = showThreshold ? Visibility.Visible : Visibility.Collapsed;
+            ColorPanel.Visibility = _currentMode == Components.ProcessingMode.ColorDetection
+                ? Visibility.Visible : Visibility.Collapsed;
+            TemplatePanel.Visibility = _currentMode == Components.ProcessingMode.TemplateMatch
+                ? Visibility.Visible : Visibility.Collapsed;
 
+            ResultTitleText.Text = _currentMode switch
+            {
+                Components.ProcessingMode.QRCode => TranslationService.Instance.ModeQRCode,
+                Components.ProcessingMode.ColorDetection => TranslationService.Instance.ModeColorDetection,
+                Components.ProcessingMode.TemplateMatch => TranslationService.Instance.ModeTemplateMatch,
+                _ => TranslationService.Instance.ResultView
+            };
+
+            _lastDecodedText = null;
+            ModeResultTextBlock.Text = "";
             AppLogger.Instance.Info($"处理模式切换为: {ModeLabelText.Text}");
+        }
+
+        /// <summary>
+        /// 目标颜色切换：更新颜色检测组件的目标颜色。
+        /// </summary>
+        private void ColorComboBox_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        {
+            _colorDetectionComponent.Target = ColorComboBox.SelectedIndex switch
+            {
+                1 => Components.ColorDetectionComponent.TargetColor.Green,
+                2 => Components.ColorDetectionComponent.TargetColor.Blue,
+                3 => Components.ColorDetectionComponent.TargetColor.Yellow,
+                4 => Components.ColorDetectionComponent.TargetColor.Orange,
+                5 => Components.ColorDetectionComponent.TargetColor.Purple,
+                6 => Components.ColorDetectionComponent.TargetColor.Cyan,
+                7 => Components.ColorDetectionComponent.TargetColor.White,
+                8 => Components.ColorDetectionComponent.TargetColor.Black,
+                _ => Components.ColorDetectionComponent.TargetColor.Red
+            };
+            AppLogger.Instance.Info($"目标颜色切换为: {ColorComboBox.SelectedItem}");
+        }
+
+        /// <summary>
+        /// 加载模板按钮：打开图片文件作为模板匹配的模板。
+        /// </summary>
+        private void LoadTemplateButton_Click(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog
+            {
+                Filter = TranslationService.GetStringStatic("ImageFilter")
+            };
+            if (openFileDialog.ShowDialog() == true)
+            {
+                if (_templateMatchComponent.LoadTemplate(openFileDialog.FileName))
+                {
+                    TemplateStatusText.Text =
+                        $"{TranslationService.Instance.TemplateLoaded} ({_templateMatchComponent.TemplateWidth}x{_templateMatchComponent.TemplateHeight})";
+                    AppLogger.Instance.Info($"{TranslationService.Instance.TemplateLoaded}: {openFileDialog.FileName}");
+                }
+                else
+                {
+                    ShowError(TranslationService.GetStringStatic("TemplateLoadFailed"));
+                }
+            }
         }
 
         /// <summary>
@@ -361,6 +447,40 @@ namespace MachineVisionApp
         }
 
         /// <summary>
+        /// 按当前模式处理单帧图像，返回处理结果图像。
+        /// </summary>
+        /// <param name="originalFrame">原始彩色帧</param>
+        /// <param name="grayFrame">灰度帧</param>
+        /// <param name="count">输出：目标数量（轮廓数/颜色目标数）</param>
+        /// <param name="modeResult">输出：模式相关结果文本（识别内容/匹配分数）</param>
+        private Mat ProcessByMode(Mat originalFrame, Mat grayFrame, out int count, out string modeResult)
+        {
+            count = 0;
+            modeResult = "";
+
+            switch (_currentMode)
+            {
+                case Components.ProcessingMode.QRCode:
+                    Mat qrDisplay = originalFrame.Clone();
+                    modeResult = _barcodeDetectionComponent.Detect(originalFrame, qrDisplay) ?? "";
+                    return qrDisplay;
+
+                case Components.ProcessingMode.ColorDetection:
+                    Mat colorResult = _colorDetectionComponent.Detect(originalFrame, out count);
+                    return colorResult;
+
+                case Components.ProcessingMode.TemplateMatch:
+                    Mat tmResult = _templateMatchComponent.Match(grayFrame, out double score);
+                    modeResult = _templateMatchComponent.HasTemplate ? $"{score:P1}" : "";
+                    return tmResult;
+
+                default:
+                    return _imageProcessingComponent.Process(
+                        grayFrame, _currentMode, _threshold1, _threshold2, out count);
+            }
+        }
+
+        /// <summary>
         /// 每帧处理：执行图像处理（多模式）+ 人脸检测 + 更新显示 + FPS统计。
         /// 该方法在后台线程调用，UI 更新通过 Dispatcher 封送。
         /// </summary>
@@ -370,8 +490,7 @@ namespace MachineVisionApp
             {
                 _frameStopwatch.Restart();
 
-                Mat edges = _imageProcessingComponent.Process(
-                    grayFrame, _currentMode, _threshold1, _threshold2, out int contourCount);
+                Mat edges = ProcessByMode(originalFrame, grayFrame, out int contourCount, out string modeResult);
 
                 int faceCount = _faceDetectionComponent.DetectFaces(grayFrame, originalFrame);
 
@@ -400,7 +519,18 @@ namespace MachineVisionApp
                     ContourCountTextBlock.Text = $"{contourCount}";
                     FpsTextBlock.Text = $"{_currentFps:F1} FPS";
                     ProcessTimeTextBlock.Text = $"{processTimeMs} ms";
-                    ThresholdInfoText.Text = $"{_threshold1} ~ {_threshold2}";
+                    bool showThreshold = _currentMode is Components.ProcessingMode.Canny or Components.ProcessingMode.Contour;
+                    ThresholdInfoText.Text = showThreshold ? $"{_threshold1} ~ {_threshold2}" : "";
+                    ModeResultTextBlock.Text = modeResult;
+
+                    // QR/条码识别到新内容时记录日志（去重）
+                    if (_currentMode == Components.ProcessingMode.QRCode &&
+                        !string.IsNullOrEmpty(modeResult) && modeResult != _lastDecodedText)
+                    {
+                        _lastDecodedText = modeResult;
+                        AppLogger.Instance.Info($"{TranslationService.Instance.QRDecoded}: {modeResult}");
+                    }
+
                     UpdateCameraData();
                 });
             }
@@ -440,12 +570,14 @@ namespace MachineVisionApp
 
                     Mat grayImage = new Mat();
                     Cv2.CvtColor(image, grayImage, ColorConversionCodes.BGR2GRAY);
-                    Mat edges = _imageProcessingComponent.Process(
-                        grayImage, _currentMode, _threshold1, _threshold2, out int contourCount);
+                    Mat edges = ProcessByMode(image, grayImage, out int contourCount, out string modeResult);
                     int faceCount = _faceDetectionComponent.DetectFaces(grayImage, image);
                     _imageDisplayComponent.UpdateImages(image, edges, _threshold1, _threshold2);
                     FaceCountTextBlock.Text = $"{faceCount}";
                     ContourCountTextBlock.Text = $"{contourCount}";
+                    bool showThreshold = _currentMode is Components.ProcessingMode.Canny or Components.ProcessingMode.Contour;
+                    ThresholdInfoText.Text = showThreshold ? $"{_threshold1} ~ {_threshold2}" : "";
+                    ModeResultTextBlock.Text = modeResult;
                     EmptyOverlayLeft.Visibility = Visibility.Collapsed;
                     EmptyOverlayRight.Visibility = Visibility.Collapsed;
                     HideError();
