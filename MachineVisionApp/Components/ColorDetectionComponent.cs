@@ -13,17 +13,32 @@ namespace MachineVisionApp.Components
         /// <summary>目标颜色枚举</summary>
         public enum TargetColor
         {
-            Red, Green, Blue, Yellow, Orange, Purple, Cyan, White, Black
+            Red, Green, Blue, Yellow, Orange, Purple, Cyan, White, Black, Custom
         }
 
         private TargetColor _target = TargetColor.Red; // 当前目标颜色（默认红色）
         private const double MinArea = 200;            // 最小目标面积，过滤噪点
+        private Scalar _customLower = new(0, 100, 100); // 自定义取色的 HSV 下界
+        private Scalar _customUpper = new(10, 255, 255); // 自定义取色的 HSV 上界
 
         /// <summary>当前目标颜色</summary>
         public TargetColor Target
         {
             get => _target;
             set => _target = value;
+        }
+
+        /// <summary>
+        /// 根据点击像素的 HSV 值设置自定义取色范围（色调 ±12，饱和度/明度向下放宽）。
+        /// </summary>
+        public void SetCustomRange(int hue, int saturation, int value)
+        {
+            int hueLow = Math.Max(hue - 12, 0);
+            int hueHigh = Math.Min(hue + 12, 179);
+            int satLow = Math.Clamp(saturation - 70, 30, 255);
+            int valLow = Math.Clamp(value - 70, 30, 255);
+            _customLower = new Scalar(hueLow, satLow, valLow);
+            _customUpper = new Scalar(hueHigh, 255, 255);
         }
 
         /// <summary>
@@ -102,6 +117,9 @@ namespace MachineVisionApp.Components
                     break;
                 case TargetColor.Black:
                     Cv2.InRange(hsv, new Scalar(0, 0, 0), new Scalar(180, 255, 60), mask);
+                    break;
+                case TargetColor.Custom:
+                    Cv2.InRange(hsv, _customLower, _customUpper, mask);
                     break;
                 default:
                     Cv2.InRange(hsv, new Scalar(0, 0, 0), new Scalar(180, 255, 255), mask);

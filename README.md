@@ -14,10 +14,13 @@
 
 - 📡 **Dual Source** – Local USB camera or network IP camera (RTSP / MJPEG over HTTP)
 - 🧍 **Face Detection** – Haar cascade classifier with configurable overlay style
-- 🪞 **8 Processing Modes** – Canny, Sobel, Laplacian, Binary Threshold, Contour Detection, QR/Barcode, Color Detection, Template Matching
+- 🪞 **11 Processing Modes** – Canny, Sobel, Laplacian, Binary Threshold, Contour, QR/Barcode, Color Detection, Template Matching, Shape Detection, Feature Matching, Enhancement
 - 📷 **QR / Barcode** – Real-time decoding of QR codes and 1D barcodes (EAN/UPC/Code128/Code39) with on-screen result display
-- 🎨 **Color Detection** – HSV-based target color detection with 9 preset colors and object counting
+- 🎨 **Color Detection** – HSV-based target color detection with 9 preset colors, object counting, and click-to-pick sampling from the live image
 - 🎯 **Template Matching** – Load a template image and locate it in the live feed with a match score
+- 🔺 **Shape Detection** – Classify objects into circles, rectangles, triangles, pentagons and polygons with per-type statistics
+- 🧿 **Feature Matching** – ORB keypoint matching with RANSAC homography, robust to rotation/scale changes
+- ✨ **Enhancement** – CLAHE histogram equalization + unsharp masking for low-contrast scenes
 - 🎥 **Video Recording** – Record processed video to AVI files with one click
 - 📸 **Screenshot** – Save current frame as PNG screenshot
 - 🌐 **Network Camera** – Connect to phone cameras via IP Webcam apps
@@ -105,12 +108,16 @@ MachineVisionApp/
 │   ├── ImageProcessingComponent.cs # 5 classic modes (Canny/Sobel/Laplacian/Binary/Contour)
 │   ├── FaceDetectionComponent.cs   # Haar cascade face detection
 │   ├── BarcodeDetectionComponent.cs # QR/barcode decoding (ZXing.Net)
-│   ├── ColorDetectionComponent.cs  # HSV color detection + object counting
+│   ├── ColorDetectionComponent.cs  # HSV color detection + click-to-pick sampling
 │   ├── TemplateMatchComponent.cs   # Template matching with score
+│   ├── ShapeDetectionComponent.cs  # Geometric shape classification + statistics
+│   ├── FeatureMatchComponent.cs    # ORB feature matching + RANSAC homography
+│   ├── EnhancementComponent.cs     # CLAHE + unsharp masking enhancement
 │   ├── RecordingComponent.cs       # AVI video recording via VideoWriter
 │   └── ThresholdParameterComponent # Canny threshold UI logic
 ├── Views/
 │   ├── CustomTitleBar.xaml / .cs   # Custom window chrome + lang switch
+├── TestImages/                     # Sample test images (scene, templates, face photo)
 └── haarcascade_frontalface_default.xml
 ```
 
@@ -123,8 +130,11 @@ MachineVisionApp/
 | `ImageProcessingComponent` | 5 classic modes: Canny, Sobel, Laplacian, Binary Threshold, Contour Detection |
 | `FaceDetectionComponent` | `DetectMultiScale` + histogram equalization preprocessing + bounding box rendering |
 | `BarcodeDetectionComponent` | ZXing.Net decoding of QR/DataMatrix/EAN/UPC/Code128/Code39, frame-throttled with result caching |
-| `ColorDetectionComponent` | HSV `InRange` masks + morphology + contour counting for 9 preset target colors |
+| `ColorDetectionComponent` | HSV `InRange` masks + morphology + contour counting for 9 preset target colors, plus click-to-pick custom sampling |
 | `TemplateMatchComponent` | `MatchTemplate` (CCoeffNormed) with threshold gating and score overlay |
+| `ShapeDetectionComponent` | Canny + contour polygon approximation + circularity analysis, classifies circles/rects/triangles/pentagons/polygons |
+| `FeatureMatchComponent` | ORB keypoints + BFMatcher ratio test + RANSAC homography, draws perspective detection box |
+| `EnhancementComponent` | CLAHE histogram equalization + unsharp masking |
 | `RecordingComponent` | `VideoWriter`-based AVI recording with MJPG codec |
 | `ThresholdParameterComponent` | Validates input and fires `OnThresholdsChanged` |
 | `TranslationService` | `INotifyPropertyChanged` singleton, `ResourceManager`-backed, fires full refresh on culture switch |

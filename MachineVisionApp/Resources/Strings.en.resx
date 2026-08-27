@@ -268,4 +268,37 @@
   <data name="ColorBlack" xml:space="preserve">
     <value>Black</value>
   </data>
+  <data name="ModeShapeDetection" xml:space="preserve">
+    <value>Shape Detection</value>
+  </data>
+  <data name="ModeFeatureMatch" xml:space="preserve">
+    <value>Feature Matching</value>
+  </data>
+  <data name="ModeEnhancement" xml:space="preserve">
+    <value>Enhancement</value>
+  </data>
+  <data name="ShapeCircle" xml:space="preserve">
+    <value>Circle</value>
+  </data>
+  <data name="ShapeRect" xml:space="preserve">
+    <value>Rect</value>
+  </data>
+  <data name="ShapeTriangle" xml:space="preserve">
+    <value>Triangle</value>
+  </data>
+  <data name="ShapePentagon" xml:space="preserve">
+    <value>Pentagon</value>
+  </data>
+  <data name="ShapePolygon" xml:space="preserve">
+    <value>Polygon</value>
+  </data>
+  <data name="ColorCustom" xml:space="preserve">
+    <value>Custom (Pick)</value>
+  </data>
+  <data name="PickColorHint" xml:space="preserve">
+    <value>Click the left image to pick a target color</value>
+  </data>
+  <data name="FeatureMatches" xml:space="preserve">
+    <value>Matches</value>
+  </data>
 </root>
