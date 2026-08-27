@@ -5,11 +5,14 @@ namespace MachineVisionApp.Components
     /// <summary>图像处理模式枚举</summary>
     public enum ProcessingMode
     {
-        Canny,       // Canny 边缘检测
-        Sobel,       // Sobel 梯度
-        Laplacian,   // Laplacian 算子
-        Binary,      // 二值化
-        Contour      // 轮廓检测
+        Canny,          // Canny 边缘检测
+        Sobel,          // Sobel 梯度
+        Laplacian,      // Laplacian 算子
+        Binary,         // 二值化
+        Contour,        // 轮廓检测
+        QRCode,         // 二维码/条码识别
+        ColorDetection, // 颜色检测
+        TemplateMatch   // 模板匹配
     }
 
     /// <summary>

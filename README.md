@@ -1,10 +1,11 @@
-<h1 align="center">🧠 Host Computer Vision System</h1>
+<h1 align="center">🧠 Machine Vision App</h1>
 
 <p align="center">
   A modern host computer (上位机) desktop application for real-time video processing,
-  edge detection, and face recognition over local or network cameras.
+  edge detection, face recognition, barcode scanning, color detection, and template matching
+  over local or network cameras.
   <br/>
-  Built with <strong>WPF</strong> · <strong>OpenCvSharp</strong> · <strong>.NET 8</strong>
+  Built with <strong>WPF</strong> · <strong>OpenCvSharp</strong> · <strong>ZXing.Net</strong> · <strong>.NET 8</strong>
 </p>
 
 ---
@@ -13,12 +14,15 @@
 
 - 📡 **Dual Source** – Local USB camera or network IP camera (RTSP / MJPEG over HTTP)
 - 🧍 **Face Detection** – Haar cascade classifier with configurable overlay style
-- 🪞 **5 Processing Modes** – Canny, Sobel, Laplacian, Binary Threshold, Contour Detection
+- 🪞 **8 Processing Modes** – Canny, Sobel, Laplacian, Binary Threshold, Contour Detection, QR/Barcode, Color Detection, Template Matching
+- 📷 **QR / Barcode** – Real-time decoding of QR codes and 1D barcodes (EAN/UPC/Code128/Code39) with on-screen result display
+- 🎨 **Color Detection** – HSV-based target color detection with 9 preset colors and object counting
+- 🎯 **Template Matching** – Load a template image and locate it in the live feed with a match score
 - 🎥 **Video Recording** – Record processed video to AVI files with one click
 - 📸 **Screenshot** – Save current frame as PNG screenshot
 - 🌐 **Network Camera** – Connect to phone cameras via IP Webcam apps
 - 🌍 **i18n Support** – Built-in Chinese & English, switchable at runtime
-- 🎨 **Modern Dark UI** – Refined GitHub-dark theme with card layout, status bar, collapsible log panel
+- 🎨 **Modern Dark UI** – Refined GitHub-dark theme with card layout, status bar, collapsible log panel, resizable window
 - 🖼 **Image Analysis** – Load static images and apply the full processing pipeline
 - 📊 **Real-time Stats** – FPS counter, processing time, face/contour counts
 
@@ -30,24 +34,25 @@
 ┌─────────────────────────────────────────────────────────────┐
 │  [MV] Machine Vision App              [中/EN] [─] [□] [×]  │
 ├──────────────────────────┬──────────────────────────────────┤
-│  ● Original Stream       │  ◆ Edge Detection    Faces:3 · Cnt:5│
+│  ● Original Stream       │  ◆ Processing Result             │
 │  ┌──────────────────────┐│  ┌──────────────────────┐        │
 │  │                      ││  │                      │        │
 │  │     Camera Feed      ││  │   Processed Output   │        │
 │  │                      ││  │                      │        │
 │  └──────────────────────┘│  └──────────────────────┘        │
-│  ● Connected             │  Canny          100 ~ 200        │
+│  ● Connected             │  QR/Barcode          内容文本    │
 ├─────────────────────────────────────────────────────────────┤
 │ [Source: ▼ Local] [● Connected] [Connect] [Disconnect]      │
 │ ─────────────────────────────────────────────────────────── │
-│ [Mode: ▼ Canny] [Threshold: 100] ~ [200] [Apply]            │
+│ [Mode: ▼ QR/Barcode] [Threshold: 100] ~ [200] [Apply]       │
+│ [Mode: ▼ Color] [Color: ▼ Red] [Mode: ▼ Template] [📁Load]  │
 │ [📸 Save Snapshot] [🎥 Record] │ [▶ Start] [■ Stop] [📁 Load]│
 ├─────────────────────────────────────────────────────────────┤
-│  30.2 FPS · 12 ms                          [📋 Log]        │
+│  30.2 FPS · 12 ms              Machine Vision App · v2.1.0  │
 ├─────────────────────────────────────────────────────────────┤
 │  📋 Log                                       [Clear]      │
 │  [14:23:01] [INFO] 设备已连接                              │
-│  [14:23:01] [INFO] 处理模式切换为: Canny 边缘检测          │
+│  [14:23:01] [INFO] 识别到内容: https://github.com          │
 └─────────────────────────────────────────────────────────────┘
 ```
 
@@ -58,11 +63,12 @@
 1. **Select Source** – Choose "Local Camera" or "Network Stream"  
 2. **Configure** – For network, enter IP address and port  
 3. **Connect** – Establish video stream connection  
-4. **Choose Mode** – Select processing algorithm: Canny / Sobel / Laplacian / Binary / Contour  
+4. **Choose Mode** – Select processing algorithm: Canny / Sobel / Laplacian / Binary / Contour / QR-Barcode / Color Detection / Template Matching  
 5. **Process** – Real-time image processing + face detection, with FPS and timing stats  
 6. **Adjust** – Fine-tune Canny thresholds and re-apply (for Canny / Contour modes)  
-7. **Save** – Take screenshots or record video at any time  
-8. **Load Image** – Offline analysis from image files
+7. **Scan / Detect / Match** – Point the camera at a QR code, colored object, or a loaded template  
+8. **Save** – Take screenshots or record video at any time  
+9. **Load Image** – Offline analysis from image files
 
 All processing runs asynchronously on a background thread, keeping the UI responsive.
 
@@ -96,8 +102,11 @@ MachineVisionApp/
 ├── Components/
 │   ├── VideoCaptureComponent.cs    # Camera source (local + network)
 │   ├── ImageDisplayComponent.cs    # WPF Image display & frame update
-│   ├── ImageProcessingComponent.cs # 5 processing modes (Canny/Sobel/Laplacian/Binary/Contour)
+│   ├── ImageProcessingComponent.cs # 5 classic modes (Canny/Sobel/Laplacian/Binary/Contour)
 │   ├── FaceDetectionComponent.cs   # Haar cascade face detection
+│   ├── BarcodeDetectionComponent.cs # QR/barcode decoding (ZXing.Net)
+│   ├── ColorDetectionComponent.cs  # HSV color detection + object counting
+│   ├── TemplateMatchComponent.cs   # Template matching with score
 │   ├── RecordingComponent.cs       # AVI video recording via VideoWriter
 │   └── ThresholdParameterComponent # Canny threshold UI logic
 ├── Views/
@@ -111,8 +120,11 @@ MachineVisionApp/
 |-----------|----------------|
 | `VideoCaptureComponent` | `VideoSourceType.LocalCamera` / `.NetworkStream`, auto-fallback APIs (DSHOW → MSMF → ANY), connection state machine |
 | `ImageDisplayComponent` | Batched `Dispatcher.Invoke` for dual-image update |
-| `ImageProcessingComponent` | 5 modes: Canny, Sobel, Laplacian, Binary Threshold, Contour Detection |
+| `ImageProcessingComponent` | 5 classic modes: Canny, Sobel, Laplacian, Binary Threshold, Contour Detection |
 | `FaceDetectionComponent` | `DetectMultiScale` + histogram equalization preprocessing + bounding box rendering |
+| `BarcodeDetectionComponent` | ZXing.Net decoding of QR/DataMatrix/EAN/UPC/Code128/Code39, frame-throttled with result caching |
+| `ColorDetectionComponent` | HSV `InRange` masks + morphology + contour counting for 9 preset target colors |
+| `TemplateMatchComponent` | `MatchTemplate` (CCoeffNormed) with threshold gating and score overlay |
 | `RecordingComponent` | `VideoWriter`-based AVI recording with MJPG codec |
 | `ThresholdParameterComponent` | Validates input and fires `OnThresholdsChanged` |
 | `TranslationService` | `INotifyPropertyChanged` singleton, `ResourceManager`-backed, fires full refresh on culture switch |
@@ -137,6 +149,7 @@ MachineVisionApp/
   - `OpenCvSharp4` – OpenCV bindings
   - `OpenCvSharp4.runtime.win` – Native OpenCV binaries
   - `OpenCvSharp4.WpfExtensions` – `BitmapSource` conversion
+  - `ZXing.Net` – QR code & barcode decoding
 
 ---
 
@@ -144,8 +157,8 @@ MachineVisionApp/
 
 ```bash
 # Clone the repository
-git clone <repo-url>
-cd MachineVisionApp
+git clone https://github.com/xianshi3/machine-vision-app.git
+cd machine-vision-app
 
 # Restore and build
 dotnet restore
@@ -165,6 +178,7 @@ Or open `MachineVisionApp.sln` in Visual Studio 2022 and press **F5**.
 |-----------------|---------------------------------|
 | `WPF`           | UI framework for Windows apps   |
 | `OpenCvSharp`   | .NET wrapper for OpenCV 4.x     |
+| `ZXing.Net`     | QR code & barcode decoding      |
 | `C#`            | Primary programming language    |
 | `XAML`          | UI design and layout            |
 | `.resx`         | Resource files for i18n         |

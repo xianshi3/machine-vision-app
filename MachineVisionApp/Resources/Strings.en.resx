@@ -211,4 +211,61 @@
   <data name="SaveFailed" xml:space="preserve">
     <value>Save failed</value>
   </data>
+  <data name="ModeQRCode" xml:space="preserve">
+    <value>QR / Barcode</value>
+  </data>
+  <data name="ModeColorDetection" xml:space="preserve">
+    <value>Color Detection</value>
+  </data>
+  <data name="ModeTemplateMatch" xml:space="preserve">
+    <value>Template Match</value>
+  </data>
+  <data name="ResultView" xml:space="preserve">
+    <value>Processing Result</value>
+  </data>
+  <data name="TargetColor" xml:space="preserve">
+    <value>Target Color</value>
+  </data>
+  <data name="LoadTemplate" xml:space="preserve">
+    <value>Load Template</value>
+  </data>
+  <data name="NoTemplate" xml:space="preserve">
+    <value>No template loaded</value>
+  </data>
+  <data name="TemplateLoaded" xml:space="preserve">
+    <value>Template loaded</value>
+  </data>
+  <data name="TemplateLoadFailed" xml:space="preserve">
+    <value>Failed to load template. Check the image file.</value>
+  </data>
+  <data name="QRDecoded" xml:space="preserve">
+    <value>Decoded</value>
+  </data>
+  <data name="ColorRed" xml:space="preserve">
+    <value>Red</value>
+  </data>
+  <data name="ColorGreen" xml:space="preserve">
+    <value>Green</value>
+  </data>
+  <data name="ColorBlue" xml:space="preserve">
+    <value>Blue</value>
+  </data>
+  <data name="ColorYellow" xml:space="preserve">
+    <value>Yellow</value>
+  </data>
+  <data name="ColorOrange" xml:space="preserve">
+    <value>Orange</value>
+  </data>
+  <data name="ColorPurple" xml:space="preserve">
+    <value>Purple</value>
+  </data>
+  <data name="ColorCyan" xml:space="preserve">
+    <value>Cyan</value>
+  </data>
+  <data name="ColorWhite" xml:space="preserve">
+    <value>White</value>
+  </data>
+  <data name="ColorBlack" xml:space="preserve">
+    <value>Black</value>
+  </data>
 </root>

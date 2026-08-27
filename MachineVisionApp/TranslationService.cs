@@ -61,6 +61,23 @@ namespace MachineVisionApp
         public string ModeLaplacian => GetString("ModeLaplacian");
         public string ModeBinary => GetString("ModeBinary");
         public string ModeContour => GetString("ModeContour");
+        public string ModeQRCode => GetString("ModeQRCode");
+        public string ModeColorDetection => GetString("ModeColorDetection");
+        public string ModeTemplateMatch => GetString("ModeTemplateMatch");
+        public string ResultView => GetString("ResultView");
+        public string TargetColor => GetString("TargetColor");
+        public string LoadTemplate => GetString("LoadTemplate");
+        public string NoTemplate => GetString("NoTemplate");
+        public string TemplateLoaded => GetString("TemplateLoaded");
+        public string QRDecoded => GetString("QRDecoded");
+
+        /// <summary>目标颜色名称列表（供颜色检测下拉框使用）</summary>
+        public string[] ColorNames => new[]
+        {
+            GetString("ColorRed"), GetString("ColorGreen"), GetString("ColorBlue"),
+            GetString("ColorYellow"), GetString("ColorOrange"), GetString("ColorPurple"),
+            GetString("ColorCyan"), GetString("ColorWhite"), GetString("ColorBlack")
+        };
         public string SaveScreenshot => GetString("SaveScreenshot");
         public string StartRecording => GetString("StartRecording");
         public string StopRecording => GetString("StopRecording");

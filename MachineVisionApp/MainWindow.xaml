@@ -3,12 +3,15 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:local="clr-namespace:MachineVisionApp"
         xmlns:views="clr-namespace:MachineVisionApp.Views"
+        xmlns:shell="clr-namespace:System.Windows.Shell;assembly=PresentationFramework"
         Title="{Binding Source={x:Static local:TranslationService.Instance}, Path=AppTitle}"
-        Height="800" Width="1120"
+        Height="820" Width="1200" MinWidth="1024" MinHeight="700"
         WindowStartupLocation="CenterScreen"
-        ResizeMode="NoResize" WindowStyle="None"
-        AllowsTransparency="True"
+        ResizeMode="CanResize" WindowStyle="None"
         Background="{StaticResource BgBrush}">
+    <shell:WindowChrome.WindowChrome>
+        <shell:WindowChrome CaptionHeight="48" ResizeBorderThickness="6" CornerRadius="0" GlassFrameThickness="0"/>
+    </shell:WindowChrome.WindowChrome>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="48"/>
@@ -60,8 +63,9 @@
                             <Image x:Name="OriginalImage" Stretch="Uniform" Margin="6"/>
                             <Border x:Name="EmptyOverlayLeft" Background="{StaticResource BgBrush}" Visibility="Visible">
                                 <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
-                                    <Ellipse Width="48" Height="48" Fill="{StaticResource CardBrush}" Margin="0,0,0,12"/>
-                                    <TextBlock Text="No Signal" Foreground="{StaticResource TextMutedBrush}" FontSize="14" HorizontalAlignment="Center"/>
+                                    <TextBlock Text="&#xE714;" FontFamily="Segoe MDL2 Assets" FontSize="40"
+                                               Foreground="{StaticResource TextMutedBrush}" HorizontalAlignment="Center"/>
+                                    <TextBlock Text="No Signal" Foreground="{StaticResource TextMutedBrush}" FontSize="14" HorizontalAlignment="Center" Margin="0,10,0,0"/>
                                     <TextBlock x:Name="SourceInfoText" Text="{Binding Source={x:Static local:TranslationService.Instance}, Path=CameraWaiting}"
                                                Foreground="{StaticResource TextMutedBrush}" FontSize="11" HorizontalAlignment="Center" Margin="0,4,0,0"/>
                                 </StackPanel>
@@ -94,7 +98,7 @@
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
                             <Ellipse Grid.Column="0" Width="8" Height="8" Fill="{StaticResource PrimaryBrush}" VerticalAlignment="Center" Margin="0,0,10,0"/>
-                            <TextBlock Grid.Column="1" Text="{Binding Source={x:Static local:TranslationService.Instance}, Path=EdgeDetection}"
+                            <TextBlock Grid.Column="1" x:Name="ResultTitleText" Text="{Binding Source={x:Static local:TranslationService.Instance}, Path=ResultView}"
                                        FontSize="13" FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}" VerticalAlignment="Center"/>
                             <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
                                 <TextBlock Text="{Binding Source={x:Static local:TranslationService.Instance}, Path=Faces}" Style="{StaticResource LabelStyle}" FontSize="11" Margin="0,0,4,0"/>
@@ -110,8 +114,9 @@
                             <Image x:Name="EdgeImage" Stretch="Uniform" Margin="6"/>
                             <Border x:Name="EmptyOverlayRight" Background="{StaticResource BgBrush}" Visibility="Visible">
                                 <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
-                                    <Ellipse Width="48" Height="48" Fill="{StaticResource CardBrush}" Margin="0,0,0,12"/>
-                                    <TextBlock Text="No Data" Foreground="{StaticResource TextMutedBrush}" FontSize="14" HorizontalAlignment="Center"/>
+                                    <TextBlock Text="&#xE9D9;" FontFamily="Segoe MDL2 Assets" FontSize="40"
+                                               Foreground="{StaticResource TextMutedBrush}" HorizontalAlignment="Center"/>
+                                    <TextBlock Text="No Data" Foreground="{StaticResource TextMutedBrush}" FontSize="14" HorizontalAlignment="Center" Margin="0,10,0,0"/>
                                 </StackPanel>
                             </Border>
                         </Grid>
@@ -120,6 +125,7 @@
                         <StackPanel Orientation="Horizontal">
                             <TextBlock x:Name="ModeLabelText" Text="Canny" Style="{StaticResource ValueStyle}" FontSize="11" FontWeight="SemiBold" Foreground="{StaticResource PrimaryBrush}"/>
                             <TextBlock x:Name="ThresholdInfoText" Text="100 ~ 200" Style="{StaticResource ValueStyle}" FontSize="11" FontWeight="Normal" Margin="8,0,0,0"/>
+                            <TextBlock x:Name="ModeResultTextBlock" Text="" Style="{StaticResource ValueStyle}" FontSize="11" FontWeight="Normal" Foreground="{StaticResource SuccessBrush}" Margin="12,0,0,0" TextTrimming="CharacterEllipsis" MaxWidth="200"/>
                         </StackPanel>
                     </Border>
                 </Grid>
@@ -185,7 +191,7 @@
                             <!-- Mode + Actions -->
                             <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
                                 <TextBlock Text="{Binding Source={x:Static local:TranslationService.Instance}, Path=ProcessingMode}" Style="{StaticResource LabelStyle}" Margin="0,0,8,0"/>
-                                <ComboBox x:Name="ProcessingModeComboBox" Width="140" SelectedIndex="0" Style="{StaticResource ComboBoxStyle}" SelectionChanged="ProcessingModeComboBox_SelectionChanged"/>
+                                <ComboBox x:Name="ProcessingModeComboBox" Width="150" SelectedIndex="0" Style="{StaticResource ComboBoxStyle}" SelectionChanged="ProcessingModeComboBox_SelectionChanged"/>
                             </StackPanel>
 
                             <Rectangle Grid.Column="1" Style="{StaticResource DividerVStyle}" Margin="12,0"/>
@@ -201,6 +207,18 @@
                                     <TextBox x:Name="Threshold2TextBox" Text="200" Width="50" Style="{StaticResource TextBoxStyle}" BorderThickness="0" Padding="8,5"/>
                                 </Border>
                                 <Button x:Name="ApplyThresholdsButton" Content="{Binding Source={x:Static local:TranslationService.Instance}, Path=Apply}" Style="{StaticResource PrimaryButtonStyle}" Padding="12,6" FontSize="12"/>
+                            </StackPanel>
+
+                            <!-- Target Color (shown in Color Detection mode) -->
+                            <StackPanel x:Name="ColorPanel" Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center" Visibility="Collapsed">
+                                <TextBlock Text="{Binding Source={x:Static local:TranslationService.Instance}, Path=TargetColor}" Style="{StaticResource LabelStyle}" Margin="0,0,8,0"/>
+                                <ComboBox x:Name="ColorComboBox" Width="110" SelectedIndex="0" Style="{StaticResource ComboBoxStyle}" SelectionChanged="ColorComboBox_SelectionChanged"/>
+                            </StackPanel>
+
+                            <!-- Template Match (shown in Template Match mode) -->
+                            <StackPanel x:Name="TemplatePanel" Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center" Visibility="Collapsed">
+                                <Button x:Name="LoadTemplateButton" Content="{Binding Source={x:Static local:TranslationService.Instance}, Path=LoadTemplate}" Style="{StaticResource SecondaryButtonStyle}" Padding="12,6" FontSize="12" Click="LoadTemplateButton_Click"/>
+                                <TextBlock x:Name="TemplateStatusText" Text="{Binding Source={x:Static local:TranslationService.Instance}, Path=NoTemplate}" Style="{StaticResource LabelStyle}" FontSize="11" Margin="10,0,0,0"/>
                             </StackPanel>
 
                             <Rectangle Grid.Column="3" Style="{StaticResource DividerVStyle}" Margin="12,0"/>
@@ -233,6 +251,7 @@
                 <TextBlock Grid.Column="0" x:Name="FpsTextBlock" Text="0 FPS" Foreground="{StaticResource TextSecondaryBrush}" FontSize="11" VerticalAlignment="Center"/>
                 <TextBlock Grid.Column="1" Text="·" Foreground="{StaticResource TextMutedBrush}" FontSize="11" Margin="8,0" VerticalAlignment="Center"/>
                 <TextBlock Grid.Column="2" x:Name="ProcessTimeTextBlock" Text="0 ms" Foreground="{StaticResource TextSecondaryBrush}" FontSize="11" VerticalAlignment="Center"/>
+                <TextBlock Grid.Column="3" Text="Machine Vision App · v2.1.0" Foreground="{StaticResource TextMutedBrush}" FontSize="11" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,12,0"/>
                 <Button Grid.Column="4" x:Name="LogToggleButton" Content="{Binding Source={x:Static local:TranslationService.Instance}, Path=Log}" Style="{StaticResource SecondaryButtonStyle}" Padding="10,2" FontSize="11" Click="LogToggleButton_Click"/>
             </Grid>
         </Border>
