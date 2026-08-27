@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System.Globalization;
+using System.Windows;
 
 namespace MachineVisionApp
 {
@@ -8,5 +9,15 @@ namespace MachineVisionApp
     /// </summary>
     public partial class App : Application
     {
+        /// <summary>
+        /// 启动时设置默认语言为英语。
+        /// </summary>
+        protected override void OnStartup(StartupEventArgs e)
+        {
+            var culture = new CultureInfo("en-US");
+            CultureInfo.CurrentUICulture = culture;
+            CultureInfo.CurrentCulture = culture;
+            base.OnStartup(e);
+        }
     }
 }

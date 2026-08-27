@@ -9,12 +9,16 @@ namespace MachineVisionApp.Views
     /// </summary>
     public partial class CustomTitleBar : UserControl
     {
-        private bool _isChinese = true; // 当前是否为中文
+        private bool _isChinese = false; // 当前是否为中文（默认英文）
 
         public CustomTitleBar()
         {
             InitializeComponent();
-            Loaded += (s, e) => UpdateButtonIcon();
+            Loaded += (s, e) =>
+            {
+                LanguageSwitchButton.Content = _isChinese ? "中/EN" : "EN/中";
+                UpdateButtonIcon();
+            };
         }
 
         /// <summary>语言切换按钮：在中英文之间切换</summary>
