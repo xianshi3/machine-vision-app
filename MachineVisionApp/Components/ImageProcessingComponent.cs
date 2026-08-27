@@ -12,7 +12,10 @@ namespace MachineVisionApp.Components
         Contour,        // 轮廓检测
         QRCode,         // 二维码/条码识别
         ColorDetection, // 颜色检测
-        TemplateMatch   // 模板匹配
+        TemplateMatch,  // 模板匹配
+        ShapeDetection, // 形状识别
+        FeatureMatch,   // 特征点匹配
+        Enhancement     // 图像增强
     }
 
     /// <summary>

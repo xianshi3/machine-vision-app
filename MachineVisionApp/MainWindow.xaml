@@ -59,7 +59,7 @@
                         </Grid>
                     </Border>
                     <Border Grid.Row="1" Background="{StaticResource BgBrush}" Margin="0" BorderThickness="0">
-                        <Grid>
+                        <Grid x:Name="OriginalViewGrid" MouseLeftButtonDown="OriginalViewGrid_MouseLeftButtonDown">
                             <Image x:Name="OriginalImage" Stretch="Uniform" Margin="6"/>
                             <Border x:Name="EmptyOverlayLeft" Background="{StaticResource BgBrush}" Visibility="Visible">
                                 <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
@@ -212,7 +212,9 @@
                             <!-- Target Color (shown in Color Detection mode) -->
                             <StackPanel x:Name="ColorPanel" Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center" Visibility="Collapsed">
                                 <TextBlock Text="{Binding Source={x:Static local:TranslationService.Instance}, Path=TargetColor}" Style="{StaticResource LabelStyle}" Margin="0,0,8,0"/>
-                                <ComboBox x:Name="ColorComboBox" Width="110" SelectedIndex="0" Style="{StaticResource ComboBoxStyle}" SelectionChanged="ColorComboBox_SelectionChanged"/>
+                                <ComboBox x:Name="ColorComboBox" Width="130" SelectedIndex="0" Style="{StaticResource ComboBoxStyle}" SelectionChanged="ColorComboBox_SelectionChanged"/>
+                                <TextBlock x:Name="PickColorHintText" Text="{Binding Source={x:Static local:TranslationService.Instance}, Path=PickColorHint}"
+                                           Style="{StaticResource LabelStyle}" FontSize="11" Foreground="{StaticResource WarningBrush}" Margin="10,0,0,0" Visibility="Collapsed"/>
                             </StackPanel>
 
                             <!-- Template Match (shown in Template Match mode) -->
@@ -251,7 +253,7 @@
                 <TextBlock Grid.Column="0" x:Name="FpsTextBlock" Text="0 FPS" Foreground="{StaticResource TextSecondaryBrush}" FontSize="11" VerticalAlignment="Center"/>
                 <TextBlock Grid.Column="1" Text="·" Foreground="{StaticResource TextMutedBrush}" FontSize="11" Margin="8,0" VerticalAlignment="Center"/>
                 <TextBlock Grid.Column="2" x:Name="ProcessTimeTextBlock" Text="0 ms" Foreground="{StaticResource TextSecondaryBrush}" FontSize="11" VerticalAlignment="Center"/>
-                <TextBlock Grid.Column="3" Text="Machine Vision App · v2.1.0" Foreground="{StaticResource TextMutedBrush}" FontSize="11" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,12,0"/>
+                <TextBlock Grid.Column="3" Text="Machine Vision App · v2.2.0" Foreground="{StaticResource TextMutedBrush}" FontSize="11" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,12,0"/>
                 <Button Grid.Column="4" x:Name="LogToggleButton" Content="{Binding Source={x:Static local:TranslationService.Instance}, Path=Log}" Style="{StaticResource SecondaryButtonStyle}" Padding="10,2" FontSize="11" Click="LogToggleButton_Click"/>
             </Grid>
         </Border>

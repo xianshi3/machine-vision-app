@@ -268,4 +268,37 @@
   <data name="ColorBlack" xml:space="preserve">
     <value>黑色</value>
   </data>
+  <data name="ModeShapeDetection" xml:space="preserve">
+    <value>形状识别</value>
+  </data>
+  <data name="ModeFeatureMatch" xml:space="preserve">
+    <value>特征点匹配</value>
+  </data>
+  <data name="ModeEnhancement" xml:space="preserve">
+    <value>图像增强</value>
+  </data>
+  <data name="ShapeCircle" xml:space="preserve">
+    <value>圆形</value>
+  </data>
+  <data name="ShapeRect" xml:space="preserve">
+    <value>矩形</value>
+  </data>
+  <data name="ShapeTriangle" xml:space="preserve">
+    <value>三角形</value>
+  </data>
+  <data name="ShapePentagon" xml:space="preserve">
+    <value>五边形</value>
+  </data>
+  <data name="ShapePolygon" xml:space="preserve">
+    <value>多边形</value>
+  </data>
+  <data name="ColorCustom" xml:space="preserve">
+    <value>自定义(取色)</value>
+  </data>
+  <data name="PickColorHint" xml:space="preserve">
+    <value>点击左侧画面选取目标颜色</value>
+  </data>
+  <data name="FeatureMatches" xml:space="preserve">
+    <value>匹配点</value>
+  </data>
 </root>

@@ -24,6 +24,9 @@ namespace MachineVisionApp
         private Components.BarcodeDetectionComponent _barcodeDetectionComponent;
         private Components.ColorDetectionComponent _colorDetectionComponent;
         private Components.TemplateMatchComponent _templateMatchComponent;
+        private Components.ShapeDetectionComponent _shapeDetectionComponent;
+        private Components.FeatureMatchComponent _featureMatchComponent;
+        private Components.EnhancementComponent _enhancementComponent;
 
         // ---- 处理参数 ----
         private Components.ProcessingMode _currentMode = Components.ProcessingMode.Canny;
@@ -32,6 +35,7 @@ namespace MachineVisionApp
         private bool _networkConfigured;
         private string? _lastDecodedText; // 最近一次记录到日志的识别文本（去重）
         private bool _suppressSelectionEvents; // 语言切换重建下拉框时抑制 SelectionChanged 副作用
+        private Mat? _lastOriginalFrame; // 最近一帧原始图像（用于点击取色）
 
         // ---- 性能追踪 ----
         private readonly Stopwatch _frameStopwatch = new();
@@ -57,6 +61,9 @@ namespace MachineVisionApp
             _barcodeDetectionComponent = new Components.BarcodeDetectionComponent();
             _colorDetectionComponent = new Components.ColorDetectionComponent();
             _templateMatchComponent = new Components.TemplateMatchComponent();
+            _shapeDetectionComponent = new Components.ShapeDetectionComponent();
+            _featureMatchComponent = new Components.FeatureMatchComponent();
+            _enhancementComponent = new Components.EnhancementComponent();
 
             _videoCaptureComponent.OnFrameCaptured += ProcessFrame;
             _videoCaptureComponent.OnCaptureStopped += OnCaptureStoppedHandler;
@@ -105,7 +112,10 @@ namespace MachineVisionApp
                     TranslationService.Instance.ModeContour,
                     TranslationService.Instance.ModeQRCode,
                     TranslationService.Instance.ModeColorDetection,
-                    TranslationService.Instance.ModeTemplateMatch
+                    TranslationService.Instance.ModeTemplateMatch,
+                    TranslationService.Instance.ModeShapeDetection,
+                    TranslationService.Instance.ModeFeatureMatch,
+                    TranslationService.Instance.ModeEnhancement
                 };
                 ProcessingModeComboBox.SelectedIndex = modeIndex < 0 ? 0 : modeIndex;
 
@@ -137,6 +147,9 @@ namespace MachineVisionApp
                 Components.ProcessingMode.QRCode => TranslationService.Instance.ModeQRCode,
                 Components.ProcessingMode.ColorDetection => TranslationService.Instance.ModeColorDetection,
                 Components.ProcessingMode.TemplateMatch => TranslationService.Instance.ModeTemplateMatch,
+                Components.ProcessingMode.ShapeDetection => TranslationService.Instance.ModeShapeDetection,
+                Components.ProcessingMode.FeatureMatch => TranslationService.Instance.ModeFeatureMatch,
+                Components.ProcessingMode.Enhancement => TranslationService.Instance.ModeEnhancement,
                 _ => TranslationService.Instance.ModeCanny
             };
         }
@@ -149,6 +162,9 @@ namespace MachineVisionApp
                 Components.ProcessingMode.QRCode => TranslationService.Instance.ModeQRCode,
                 Components.ProcessingMode.ColorDetection => TranslationService.Instance.ModeColorDetection,
                 Components.ProcessingMode.TemplateMatch => TranslationService.Instance.ModeTemplateMatch,
+                Components.ProcessingMode.ShapeDetection => TranslationService.Instance.ModeShapeDetection,
+                Components.ProcessingMode.FeatureMatch => TranslationService.Instance.ModeFeatureMatch,
+                Components.ProcessingMode.Enhancement => TranslationService.Instance.ModeEnhancement,
                 _ => TranslationService.Instance.ResultView
             };
         }
@@ -181,6 +197,8 @@ namespace MachineVisionApp
             _recordingComponent.Dispose();
             _videoCaptureComponent.Dispose();
             _templateMatchComponent.Clear();
+            _featureMatchComponent.Clear();
+            _lastOriginalFrame?.Dispose();
         }
 
         /// <summary>
@@ -290,6 +308,9 @@ namespace MachineVisionApp
                 5 => Components.ProcessingMode.QRCode,
                 6 => Components.ProcessingMode.ColorDetection,
                 7 => Components.ProcessingMode.TemplateMatch,
+                8 => Components.ProcessingMode.ShapeDetection,
+                9 => Components.ProcessingMode.FeatureMatch,
+                10 => Components.ProcessingMode.Enhancement,
                 _ => Components.ProcessingMode.Canny
             };
 
@@ -299,8 +320,13 @@ namespace MachineVisionApp
             ThresholdPanel.Visibility = showThreshold ? Visibility.Visible : Visibility.Collapsed;
             ColorPanel.Visibility = _currentMode == Components.ProcessingMode.ColorDetection
                 ? Visibility.Visible : Visibility.Collapsed;
-            TemplatePanel.Visibility = _currentMode == Components.ProcessingMode.TemplateMatch
-                ? Visibility.Visible : Visibility.Collapsed;
+            bool showTemplatePanel = _currentMode is Components.ProcessingMode.TemplateMatch or Components.ProcessingMode.FeatureMatch;
+            TemplatePanel.Visibility = showTemplatePanel ? Visibility.Visible : Visibility.Collapsed;
+
+            // 颜色检测模式下点击画面可取色
+            OriginalImage.Cursor = _currentMode == Components.ProcessingMode.ColorDetection
+                ? System.Windows.Input.Cursors.Cross : System.Windows.Input.Cursors.Arrow;
+            UpdatePickColorHint();
 
             ResultTitleText.Text = GetResultTitle(_currentMode);
 
@@ -326,13 +352,70 @@ namespace MachineVisionApp
                 6 => Components.ColorDetectionComponent.TargetColor.Cyan,
                 7 => Components.ColorDetectionComponent.TargetColor.White,
                 8 => Components.ColorDetectionComponent.TargetColor.Black,
+                9 => Components.ColorDetectionComponent.TargetColor.Custom,
                 _ => Components.ColorDetectionComponent.TargetColor.Red
             };
+            UpdatePickColorHint();
             AppLogger.Instance.Info($"目标颜色切换为: {ColorComboBox.SelectedItem}");
         }
 
+        /// <summary>更新取色提示的显示状态（仅颜色检测 + 自定义取色时显示）</summary>
+        private void UpdatePickColorHint()
+        {
+            PickColorHintText.Visibility =
+                _currentMode == Components.ProcessingMode.ColorDetection &&
+                _colorDetectionComponent.Target == Components.ColorDetectionComponent.TargetColor.Custom
+                    ? Visibility.Visible : Visibility.Collapsed;
+        }
+
         /// <summary>
-        /// 加载模板按钮：打开图片文件作为模板匹配的模板。
+        /// 点击左侧画面取色：将点击位置的像素颜色设为颜色检测的自定义目标。
+        /// </summary>
+        private void OriginalViewGrid_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            if (_currentMode != Components.ProcessingMode.ColorDetection || _lastOriginalFrame == null)
+                return;
+
+            try
+            {
+                // 将控件坐标映射回原始图像像素坐标（考虑 Uniform 缩放和黑边）
+                var pos = e.GetPosition(OriginalImage);
+                double srcW = _lastOriginalFrame.Width;
+                double srcH = _lastOriginalFrame.Height;
+                double elemW = OriginalImage.ActualWidth;
+                double elemH = OriginalImage.ActualHeight;
+                if (srcW <= 0 || srcH <= 0 || elemW <= 0 || elemH <= 0)
+                    return;
+
+                double scale = Math.Min(elemW / srcW, elemH / srcH);
+                double offsetX = (elemW - srcW * scale) / 2;
+                double offsetY = (elemH - srcH * scale) / 2;
+                double px = (pos.X - offsetX) / scale;
+                double py = (pos.Y - offsetY) / scale;
+                if (px < 0 || py < 0 || px >= srcW || py >= srcH)
+                    return;
+
+                using Mat hsv = new Mat();
+                Cv2.CvtColor(_lastOriginalFrame, hsv, ColorConversionCodes.BGR2HSV);
+                var pixel = hsv.At<Vec3b>((int)py, (int)px);
+                _colorDetectionComponent.SetCustomRange(pixel.Item0, pixel.Item1, pixel.Item2);
+
+                _suppressSelectionEvents = true;
+                ColorComboBox.SelectedIndex = 9; // 自定义(取色)
+                _suppressSelectionEvents = false;
+                _colorDetectionComponent.Target = Components.ColorDetectionComponent.TargetColor.Custom;
+                UpdatePickColorHint();
+
+                AppLogger.Instance.Info($"已取色: HSV({pixel.Item0}, {pixel.Item1}, {pixel.Item2})");
+            }
+            catch (Exception ex)
+            {
+                AppLogger.Instance.Error($"取色失败: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// 加载模板按钮：打开图片文件作为模板匹配/特征点匹配的模板。
         /// </summary>
         private void LoadTemplateButton_Click(object sender, RoutedEventArgs e)
         {
@@ -342,7 +425,10 @@ namespace MachineVisionApp
             };
             if (openFileDialog.ShowDialog() == true)
             {
-                if (_templateMatchComponent.LoadTemplate(openFileDialog.FileName))
+                bool okTemplate = _templateMatchComponent.LoadTemplate(openFileDialog.FileName);
+                bool okFeature = _featureMatchComponent.LoadTemplate(openFileDialog.FileName);
+
+                if (okTemplate || okFeature)
                 {
                     TemplateStatusText.Text =
                         $"{TranslationService.Instance.TemplateLoaded} ({_templateMatchComponent.TemplateWidth}x{_templateMatchComponent.TemplateHeight})";
@@ -529,6 +615,21 @@ namespace MachineVisionApp
                     modeResult = _templateMatchComponent.HasTemplate ? $"{score:P1}" : "";
                     return tmResult;
 
+                case Components.ProcessingMode.ShapeDetection:
+                    Mat shapeResult = _shapeDetectionComponent.Detect(grayFrame, out count, out string shapeSummary);
+                    modeResult = shapeSummary;
+                    return shapeResult;
+
+                case Components.ProcessingMode.FeatureMatch:
+                    Mat featureResult = _featureMatchComponent.Match(grayFrame, out int matches);
+                    modeResult = _featureMatchComponent.HasTemplate
+                        ? $"{TranslationService.Instance.FeatureMatches}: {matches}"
+                        : TranslationService.Instance.NoTemplate;
+                    return featureResult;
+
+                case Components.ProcessingMode.Enhancement:
+                    return _enhancementComponent.Enhance(grayFrame);
+
                 default:
                     return _imageProcessingComponent.Process(
                         grayFrame, _currentMode, _threshold1, _threshold2, out count);
@@ -544,6 +645,13 @@ namespace MachineVisionApp
             try
             {
                 _frameStopwatch.Restart();
+
+                // 颜色检测模式下保存最近一帧原始图像，供点击取色使用
+                if (_currentMode == Components.ProcessingMode.ColorDetection)
+                {
+                    _lastOriginalFrame?.Dispose();
+                    _lastOriginalFrame = originalFrame.Clone();
+                }
 
                 Mat edges = ProcessByMode(originalFrame, grayFrame, out int contourCount, out string modeResult);
 
@@ -636,6 +744,15 @@ namespace MachineVisionApp
                     EmptyOverlayLeft.Visibility = Visibility.Collapsed;
                     EmptyOverlayRight.Visibility = Visibility.Collapsed;
                     HideError();
+
+                    // 左卡片头部显示已加载图片的文件名
+                    CameraDataTextBlock.Text = System.IO.Path.GetFileName(openFileDialog.FileName);
+                    SourceInfoText.Text = openFileDialog.FileName;
+
+                    // 更新最近帧引用，供颜色检测取色使用
+                    _lastOriginalFrame?.Dispose();
+                    _lastOriginalFrame = image.Clone();
+
                     AppLogger.Instance.Info($"已加载图片: {openFileDialog.FileName}");
                 }
                 catch (Exception ex)
