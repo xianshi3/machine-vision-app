@@ -5,6 +5,8 @@
 <h1 align="center">Machine Vision App</h1>
 
 <p align="center">
+  <img src="https://img.shields.io/github/v/release/xianshi3/machine-vision-app?style=flat-square&label=release" alt="release"/>
+  <img src="https://img.shields.io/github/stars/xianshi3/machine-vision-app?style=flat-square" alt="stars"/>
   <img src="https://img.shields.io/badge/.NET-8.0-512BD4?style=flat-square&logo=.net" alt=".NET 8"/>
   <img src="https://img.shields.io/badge/WPF-Dark%20UI-58A6FF?style=flat-square" alt="WPF"/>
   <img src="https://img.shields.io/badge/OpenCV-4.11-5C3EE8?style=flat-square&logo=opencv" alt="OpenCV 4.11"/>
@@ -72,35 +74,6 @@ All screenshots below are produced by the app itself using the bundled test scen
     <td align="center"><b>Face Detection</b><br/><img src="docs/images/11_face.png" width="360"/></td>
   </tr>
 </table>
-
----
-
-## User Interface
-
-```
-┌─────────────────────────────────────────────────────────────┐
-│  [MV] Machine Vision App              [EN/中] [─] [□] [×]  │
-├──────────────────────────┬──────────────────────────────────┤
-│  ● Original Stream       │  ◆ Processing Result             │
-│  ┌──────────────────────┐│  ┌──────────────────────┐        │
-│  │                      ││  │                      │        │
-│  │     Camera Feed      ││  │   Processed Output   │        │
-│  │                      ││  │                      │        │
-│  └──────────────────────┘│  └──────────────────────┘        │
-│  ● Connected             │  Shape Detection   Circle x4 ... │
-├─────────────────────────────────────────────────────────────┤
-│ [Source: ▼ Local] [● Connected] [Connect] [Disconnect]      │
-│ ─────────────────────────────────────────────────────────── │
-│ [Mode: ▼ 11 modes] [Threshold: 100] ~ [200] [Apply]         │
-│ [Color: ▼ Red] [Click to pick] [Load Template]              │
-│ [Snapshot] [Record] │ [▶ Start] [■ Stop] [Load Image]       │
-├─────────────────────────────────────────────────────────────┤
-│  30.2 FPS · 12 ms              Machine Vision App · v2.2.0  │
-├─────────────────────────────────────────────────────────────┤
-│  Log                                          [Clear]       │
-│  [14:23:01] [INFO] Decoded: https://github.com              │
-└─────────────────────────────────────────────────────────────┘
-```
 
 ---
 

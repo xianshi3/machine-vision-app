@@ -5,6 +5,8 @@
 <h1 align="center">Machine Vision App</h1>
 
 <p align="center">
+  <img src="https://img.shields.io/github/v/release/xianshi3/machine-vision-app?style=flat-square&label=release" alt="release"/>
+  <img src="https://img.shields.io/github/stars/xianshi3/machine-vision-app?style=flat-square" alt="stars"/>
   <img src="https://img.shields.io/badge/.NET-8.0-512BD4?style=flat-square&logo=.net" alt=".NET 8"/>
   <img src="https://img.shields.io/badge/WPF-Dark%20UI-58A6FF?style=flat-square" alt="WPF"/>
   <img src="https://img.shields.io/badge/OpenCV-4.11-5C3EE8?style=flat-square&logo=opencv" alt="OpenCV 4.11"/>
@@ -72,35 +74,6 @@
     <td align="center"><b>人脸检测</b><br/><img src="docs/images/11_face.png" width="360"/></td>
   </tr>
 </table>
-
----
-
-## 界面布局
-
-```
-┌─────────────────────────────────────────────────────────────┐
-│  [MV] Machine Vision App              [EN/中] [─] [□] [×]  │
-├──────────────────────────┬──────────────────────────────────┤
-│  ● 原始视频流            │  ◆ 处理结果                      │
-│  ┌──────────────────────┐│  ┌──────────────────────┐        │
-│  │                      ││  │                      │        │
-│  │     摄像头画面       ││  │     处理输出         │        │
-│  │                      ││  │                      │        │
-│  └──────────────────────┘│  └──────────────────────┘        │
-│  ● 已连接                │  形状识别      圆形x4 ...         │
-├─────────────────────────────────────────────────────────────┤
-│ [信号源: ▼ 本地] [● 已连接] [连接] [断开]                   │
-│ ─────────────────────────────────────────────────────────── │
-│ [模式: ▼ 11种] [阈值: 100] ~ [200] [应用]                   │
-│ [颜色: ▼ 红色] [点击取色提示] [加载模板]                    │
-│ [截图] [录像] │ [▶ 开启] [■ 关闭] [加载图片]                │
-├─────────────────────────────────────────────────────────────┤
-│  30.2 FPS · 12 ms              Machine Vision App · v2.2.0  │
-├─────────────────────────────────────────────────────────────┤
-│  日志                                        [清空]         │
-│  [14:23:01] [INFO] 识别到内容: https://github.com           │
-└─────────────────────────────────────────────────────────────┘
-```
 
 ---
 
