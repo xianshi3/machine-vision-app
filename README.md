@@ -1,15 +1,19 @@
-<h1 align="center">🧠 Machine Vision App</h1>
+<p align="center">
+  <a href="README.md">English</a> | <a href="README.zh-CN.md">中文</a>
+</p>
+
+<h1 align="center">Machine Vision App</h1>
 
 <p align="center">
   <img src="https://img.shields.io/badge/.NET-8.0-512BD4?style=flat-square&logo=.net" alt=".NET 8"/>
-  <img src="https://img.shields.io/badge/WPF-Modern%20Dark%20UI-58A6FF?style=flat-square" alt="WPF"/>
+  <img src="https://img.shields.io/badge/WPF-Dark%20UI-58A6FF?style=flat-square" alt="WPF"/>
   <img src="https://img.shields.io/badge/OpenCV-4.11-5C3EE8?style=flat-square&logo=opencv" alt="OpenCV 4.11"/>
   <img src="https://img.shields.io/badge/platform-Windows%2010%2F11-0078D4?style=flat-square" alt="Windows"/>
-  <img src="https://img.shields.io/badge/lang-中文%20%2F%20English-3FB950?style=flat-square" alt="i18n"/>
+  <img src="https://img.shields.io/badge/lang-EN%20%2F%20中文-3FB950?style=flat-square" alt="i18n"/>
 </p>
 
 <p align="center">
-  A modern host computer (上位机) desktop application for real-time video processing,
+  A modern machine vision desktop application for real-time video processing,
   image recognition, barcode scanning and measurement over local or network cameras.
   <br/>
   Built with <strong>WPF</strong> · <strong>OpenCvSharp</strong> · <strong>ZXing.Net</strong> · <strong>.NET 8</strong>
@@ -21,28 +25,28 @@
 
 ---
 
-## 🚀 Features
+## Features
 
-- 📡 **Dual Source** – Local USB camera or network IP camera (RTSP / MJPEG over HTTP)
-- 🧍 **Face Detection** – Haar cascade classifier with configurable overlay style
-- 🪞 **11 Processing Modes** – Canny, Sobel, Laplacian, Binary, Contour, QR/Barcode, Color Detection, Template Matching, Shape Detection, Feature Matching, Enhancement
-- 📷 **QR / Barcode** – Real-time decoding of QR codes and 1D barcodes (EAN/UPC/Code128/Code39) with on-screen result display
-- 🎨 **Color Detection** – HSV-based detection with 9 preset colors, object counting, and click-to-pick sampling directly from the live image
-- 🎯 **Template Matching** – Locate a template image in the live feed with a match score
-- 🔺 **Shape Detection** – Classify objects into circles, rectangles, triangles, pentagons and polygons with per-type statistics
-- 🧿 **Feature Matching** – ORB keypoint matching with RANSAC homography, robust to rotation/scale changes
-- ✨ **Enhancement** – CLAHE histogram equalization + unsharp masking for low-contrast scenes
-- 🎥 **Video Recording** – Record processed video to AVI files with one click
-- 📸 **Screenshot** – Save current frame as PNG screenshot
-- 🌐 **Network Camera** – Connect to phone cameras via IP Webcam apps
-- 🌍 **i18n Support** – Built-in Chinese & English, switchable at runtime
-- 🎨 **Modern Dark UI** – GitHub-dark theme, card layout, status bar, collapsible log panel, resizable window
-- 🖼 **Image Analysis** – Load static images and apply the full processing pipeline
-- 📊 **Real-time Stats** – FPS counter, processing time, face/contour counts
+- **Dual Source** – Local USB camera or network IP camera (RTSP / MJPEG over HTTP)
+- **Face Detection** – Haar cascade classifier with configurable overlay style
+- **11 Processing Modes** – Canny, Sobel, Laplacian, Binary, Contour, QR/Barcode, Color Detection, Template Matching, Shape Detection, Feature Matching, Enhancement
+- **QR / Barcode** – Real-time decoding of QR codes and 1D barcodes (EAN/UPC/Code128/Code39) with on-screen result display
+- **Color Detection** – HSV-based detection with 9 preset colors, object counting, and click-to-pick sampling directly from the live image
+- **Template Matching** – Locate a template image in the live feed with a match score
+- **Shape Detection** – Classify objects into circles, rectangles, triangles, pentagons and polygons with per-type statistics
+- **Feature Matching** – ORB keypoint matching with RANSAC homography, robust to rotation and scale changes
+- **Enhancement** – CLAHE histogram equalization and unsharp masking for low-contrast scenes
+- **Video Recording** – Record processed video to AVI files with one click
+- **Screenshot** – Save the current frame as a PNG image
+- **Network Camera** – Connect to phone cameras via IP Webcam apps
+- **i18n Support** – Built-in English and Chinese, switchable at runtime
+- **Modern Dark UI** – GitHub-dark theme, card layout, status bar, collapsible log panel, resizable window
+- **Image Analysis** – Load static images and apply the full processing pipeline
+- **Real-time Stats** – FPS counter, processing time, face/contour counts
 
 ---
 
-## 📸 Processing Modes
+## Processing Modes
 
 All screenshots below are produced by the app itself using the bundled test scene `TestImages/test_scene.png`.
 
@@ -71,11 +75,11 @@ All screenshots below are produced by the app itself using the bundled test scen
 
 ---
 
-## 🖥️ User Interface
+## User Interface
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│  [MV] Machine Vision App              [中/EN] [─] [□] [×]  │
+│  [MV] Machine Vision App              [EN/中] [─] [□] [×]  │
 ├──────────────────────────┬──────────────────────────────────┤
 │  ● Original Stream       │  ◆ Processing Result             │
 │  ┌──────────────────────┐│  ┌──────────────────────┐        │
@@ -83,46 +87,46 @@ All screenshots below are produced by the app itself using the bundled test scen
 │  │     Camera Feed      ││  │   Processed Output   │        │
 │  │                      ││  │                      │        │
 │  └──────────────────────┘│  └──────────────────────┘        │
-│  ● Connected             │  Shape Detection   圆形x4 ...    │
+│  ● Connected             │  Shape Detection   Circle x4 ... │
 ├─────────────────────────────────────────────────────────────┤
 │ [Source: ▼ Local] [● Connected] [Connect] [Disconnect]      │
 │ ─────────────────────────────────────────────────────────── │
 │ [Mode: ▼ 11 modes] [Threshold: 100] ~ [200] [Apply]         │
-│ [Color: ▼ Red] [Hint: click to pick] [📁 Load Template]     │
-│ [📸 Snapshot] [🎥 Record] │ [▶ Start] [■ Stop] [📁 Load]    │
+│ [Color: ▼ Red] [Click to pick] [Load Template]              │
+│ [Snapshot] [Record] │ [▶ Start] [■ Stop] [Load Image]       │
 ├─────────────────────────────────────────────────────────────┤
 │  30.2 FPS · 12 ms              Machine Vision App · v2.2.0  │
 ├─────────────────────────────────────────────────────────────┤
-│  📋 Log                                       [Clear]      │
-│  [14:23:01] [INFO] 识别到内容: https://github.com           │
+│  Log                                          [Clear]       │
+│  [14:23:01] [INFO] Decoded: https://github.com              │
 └─────────────────────────────────────────────────────────────┘
 ```
 
 ---
 
-## ⚙️ How It Works
+## How It Works
 
-1. **Select Source** – Choose "Local Camera" or "Network Stream"  
-2. **Configure** – For network, enter IP address and port  
-3. **Connect** – Establish video stream connection  
-4. **Choose Mode** – Pick one of 11 processing algorithms  
-5. **Process** – Real-time processing + face detection, with FPS and timing stats  
-6. **Adjust** – Fine-tune Canny thresholds and re-apply (for Canny / Contour modes)  
-7. **Scan / Detect / Match** – Point the camera at a QR code, colored object, shape, or a loaded template  
-8. **Save** – Take screenshots or record video at any time  
+1. **Select Source** – Choose "Local Camera" or "Network Stream"
+2. **Configure** – For network, enter the IP address and port
+3. **Connect** – Establish the video stream connection
+4. **Choose Mode** – Pick one of 11 processing algorithms
+5. **Process** – Real-time processing and face detection, with FPS and timing stats
+6. **Adjust** – Fine-tune Canny thresholds and re-apply (Canny / Contour modes)
+7. **Scan / Detect / Match** – Point the camera at a QR code, colored object, shape, or a loaded template
+8. **Save** – Take screenshots or record video at any time
 9. **Load Image** – Offline analysis from image files
 
 All processing runs asynchronously on a background thread, keeping the UI responsive.
 
 ---
 
-## 📱 Using Your Phone as Camera
+## Using Your Phone as Camera
 
-1. Install **IP Webcam** (Android) or similar app on your phone  
-2. Make sure phone and PC are on the same Wi-Fi network  
-3. Launch the app and note the URL (e.g., `http://192.168.1.100:8080/video`)  
+1. Install **IP Webcam** (Android) or a similar app on your phone
+2. Make sure the phone and PC are on the same Wi-Fi network
+3. Launch the app and note the URL (e.g., `http://192.168.1.100:8080/video`)
 4. In this application:
-   - Select **"Network Stream"** as source
+   - Select **"Network Stream"** as the source
    - Enter the IP and port
    - Click **Connect**
 
@@ -130,12 +134,12 @@ The app automatically constructs the MJPEG URL and starts streaming.
 
 ---
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 MachineVisionApp/
-├── App.xaml / App.xaml.cs          # Application entry & default culture (en-US)
-├── MainWindow.xaml / .cs           # Main UI & event orchestration
+├── App.xaml / App.xaml.cs          # Application entry and default culture (en-US)
+├── MainWindow.xaml / .cs           # Main UI and event orchestration
 ├── TranslationService.cs           # i18n singleton with INotifyPropertyChanged
 ├── AppLogger.cs                    # Logging service (singleton)
 ├── Resources/
@@ -143,7 +147,7 @@ MachineVisionApp/
 │   └── Strings.en.resx             # English resource strings
 ├── Components/
 │   ├── VideoCaptureComponent.cs    # Camera source (local + network)
-│   ├── ImageDisplayComponent.cs    # WPF Image display & frame update
+│   ├── ImageDisplayComponent.cs    # WPF Image display and frame update
 │   ├── ImageProcessingComponent.cs # 5 classic modes (Canny/Sobel/Laplacian/Binary/Contour)
 │   ├── FaceDetectionComponent.cs   # Haar cascade face detection
 │   ├── BarcodeDetectionComponent.cs # QR/barcode decoding (ZXing.Net)
@@ -182,34 +186,34 @@ MachineVisionApp/
 
 ---
 
-## 🌍 Internationalization
+## Internationalization
 
-- Default language is **English** (click **中/EN** in the title bar to switch to Chinese)
+- Default language is **English** (click **EN/中** in the title bar to switch to Chinese)
 - All UI strings are managed via `.resx` resource files
-- To add a new language: copy `Strings.en.resx`, rename to `Strings.xx.resx`, translate values
+- To add a new language: copy `Strings.en.resx`, rename to `Strings.xx.resx`, and translate the values
 
 ---
 
-## 🛠 Requirements
+## Requirements
 
-- ✅ [.NET 8 SDK](https://dotnet.microsoft.com/en-us/download) (build only; the release package below is self-contained)
-- ✅ Windows 10/11 with WPF support
-- ✅ NuGet Packages (restored automatically):
+- .NET 8 SDK (build only; the release package below is self-contained)
+- Windows 10/11 with WPF support
+- NuGet packages (restored automatically):
   - `OpenCvSharp4` – OpenCV bindings
   - `OpenCvSharp4.runtime.win` – Native OpenCV binaries
   - `OpenCvSharp4.WpfExtensions` – `BitmapSource` conversion
-  - `ZXing.Net` – QR code & barcode decoding
+  - `ZXing.Net` – QR code and barcode decoding
 
 ---
 
-## 🚀 Getting Started
+## Getting Started
 
 ### Download (no build required)
 
 Grab the latest self-contained package from [Releases](../../releases/latest):
 
 1. Download `MachineVisionApp-win-x64-vX.Y.Z.zip`
-2. Extract to any folder
+2. Extract it to any folder
 3. Run `MachineVisionApp.exe`
 
 ### Build from source
@@ -229,32 +233,32 @@ dotnet run --project MachineVisionApp/MachineVisionApp.csproj
 
 Or open `MachineVisionApp.sln` in Visual Studio 2022 and press **F5**.
 
-### Try it with the bundled test images
+### Try the bundled test images
 
-Open `TestImages/` in the Load Image dialog:
+Open `TestImages/` from the Load Image dialog:
 
 | Image | What to test |
 |-------|--------------|
-| `test_scene.png` | All processing modes — edges, contours, shapes, colors, QR/barcode (`https://github.com/xianshi3/machine-vision-app`) |
+| `test_scene.png` | All processing modes – edges, contours, shapes, colors, QR/barcode (`https://github.com/xianshi3/machine-vision-app`) |
 | `template_green.png` | Template Matching (green square, score ≈ 1.0) |
 | `template_qr.png` | Feature Matching (texture-rich QR crop) |
 | `face_lena.jpg` | Face Detection |
 
 ---
 
-## 📦 Tech Stack
+## Tech Stack
 
 | Technology      | Description                     |
 |-----------------|---------------------------------|
 | `WPF`           | UI framework for Windows apps   |
 | `OpenCvSharp`   | .NET wrapper for OpenCV 4.x     |
-| `ZXing.Net`     | QR code & barcode decoding      |
+| `ZXing.Net`     | QR code and barcode decoding    |
 | `C#`            | Primary programming language    |
 | `XAML`          | UI design and layout            |
 | `.resx`         | Resource files for i18n         |
 
 ---
 
-## 📄 License
+## License
 
 This project is for learning and demonstration purposes.
