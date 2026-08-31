@@ -1,11 +1,22 @@
 <h1 align="center">🧠 Machine Vision App</h1>
 
 <p align="center">
+  <img src="https://img.shields.io/badge/.NET-8.0-512BD4?style=flat-square&logo=.net" alt=".NET 8"/>
+  <img src="https://img.shields.io/badge/WPF-Modern%20Dark%20UI-58A6FF?style=flat-square" alt="WPF"/>
+  <img src="https://img.shields.io/badge/OpenCV-4.11-5C3EE8?style=flat-square&logo=opencv" alt="OpenCV 4.11"/>
+  <img src="https://img.shields.io/badge/platform-Windows%2010%2F11-0078D4?style=flat-square" alt="Windows"/>
+  <img src="https://img.shields.io/badge/lang-中文%20%2F%20English-3FB950?style=flat-square" alt="i18n"/>
+</p>
+
+<p align="center">
   A modern host computer (上位机) desktop application for real-time video processing,
-  edge detection, face recognition, barcode scanning, color detection, and template matching
-  over local or network cameras.
+  image recognition, barcode scanning and measurement over local or network cameras.
   <br/>
   Built with <strong>WPF</strong> · <strong>OpenCvSharp</strong> · <strong>ZXing.Net</strong> · <strong>.NET 8</strong>
+</p>
+
+<p align="center">
+  <img src="docs/images/01_ui.png" alt="Main UI" width="880"/>
 </p>
 
 ---
@@ -14,10 +25,10 @@
 
 - 📡 **Dual Source** – Local USB camera or network IP camera (RTSP / MJPEG over HTTP)
 - 🧍 **Face Detection** – Haar cascade classifier with configurable overlay style
-- 🪞 **11 Processing Modes** – Canny, Sobel, Laplacian, Binary Threshold, Contour, QR/Barcode, Color Detection, Template Matching, Shape Detection, Feature Matching, Enhancement
+- 🪞 **11 Processing Modes** – Canny, Sobel, Laplacian, Binary, Contour, QR/Barcode, Color Detection, Template Matching, Shape Detection, Feature Matching, Enhancement
 - 📷 **QR / Barcode** – Real-time decoding of QR codes and 1D barcodes (EAN/UPC/Code128/Code39) with on-screen result display
-- 🎨 **Color Detection** – HSV-based target color detection with 9 preset colors, object counting, and click-to-pick sampling from the live image
-- 🎯 **Template Matching** – Load a template image and locate it in the live feed with a match score
+- 🎨 **Color Detection** – HSV-based detection with 9 preset colors, object counting, and click-to-pick sampling directly from the live image
+- 🎯 **Template Matching** – Locate a template image in the live feed with a match score
 - 🔺 **Shape Detection** – Classify objects into circles, rectangles, triangles, pentagons and polygons with per-type statistics
 - 🧿 **Feature Matching** – ORB keypoint matching with RANSAC homography, robust to rotation/scale changes
 - ✨ **Enhancement** – CLAHE histogram equalization + unsharp masking for low-contrast scenes
@@ -25,9 +36,38 @@
 - 📸 **Screenshot** – Save current frame as PNG screenshot
 - 🌐 **Network Camera** – Connect to phone cameras via IP Webcam apps
 - 🌍 **i18n Support** – Built-in Chinese & English, switchable at runtime
-- 🎨 **Modern Dark UI** – Refined GitHub-dark theme with card layout, status bar, collapsible log panel, resizable window
+- 🎨 **Modern Dark UI** – GitHub-dark theme, card layout, status bar, collapsible log panel, resizable window
 - 🖼 **Image Analysis** – Load static images and apply the full processing pipeline
 - 📊 **Real-time Stats** – FPS counter, processing time, face/contour counts
+
+---
+
+## 📸 Processing Modes
+
+All screenshots below are produced by the app itself using the bundled test scene `TestImages/test_scene.png`.
+
+<table>
+  <tr>
+    <td align="center"><b>Canny Edge</b><br/><img src="docs/images/02_canny.png" width="360"/></td>
+    <td align="center"><b>Contour Detection</b><br/><img src="docs/images/03_contour.png" width="360"/></td>
+  </tr>
+  <tr>
+    <td align="center"><b>Binary Threshold</b><br/><img src="docs/images/04_binary.png" width="360"/></td>
+    <td align="center"><b>Shape Detection</b><br/><img src="docs/images/05_shape.png" width="360"/></td>
+  </tr>
+  <tr>
+    <td align="center"><b>Color Detection (Red)</b><br/><img src="docs/images/06_color.png" width="360"/></td>
+    <td align="center"><b>QR / Barcode</b><br/><img src="docs/images/07_qr.png" width="360"/></td>
+  </tr>
+  <tr>
+    <td align="center"><b>Template Matching</b><br/><img src="docs/images/08_template.png" width="360"/></td>
+    <td align="center"><b>Feature Matching (ORB)</b><br/><img src="docs/images/09_feature.png" width="360"/></td>
+  </tr>
+  <tr>
+    <td align="center"><b>Enhancement (CLAHE + Sharpen)</b><br/><img src="docs/images/10_enhance.png" width="360"/></td>
+    <td align="center"><b>Face Detection</b><br/><img src="docs/images/11_face.png" width="360"/></td>
+  </tr>
+</table>
 
 ---
 
@@ -43,19 +83,18 @@
 │  │     Camera Feed      ││  │   Processed Output   │        │
 │  │                      ││  │                      │        │
 │  └──────────────────────┘│  └──────────────────────┘        │
-│  ● Connected             │  QR/Barcode          内容文本    │
+│  ● Connected             │  Shape Detection   圆形x4 ...    │
 ├─────────────────────────────────────────────────────────────┤
 │ [Source: ▼ Local] [● Connected] [Connect] [Disconnect]      │
 │ ─────────────────────────────────────────────────────────── │
-│ [Mode: ▼ QR/Barcode] [Threshold: 100] ~ [200] [Apply]       │
-│ [Mode: ▼ Color] [Color: ▼ Red] [Mode: ▼ Template] [📁Load]  │
-│ [📸 Save Snapshot] [🎥 Record] │ [▶ Start] [■ Stop] [📁 Load]│
+│ [Mode: ▼ 11 modes] [Threshold: 100] ~ [200] [Apply]         │
+│ [Color: ▼ Red] [Hint: click to pick] [📁 Load Template]     │
+│ [📸 Snapshot] [🎥 Record] │ [▶ Start] [■ Stop] [📁 Load]    │
 ├─────────────────────────────────────────────────────────────┤
-│  30.2 FPS · 12 ms              Machine Vision App · v2.1.0  │
+│  30.2 FPS · 12 ms              Machine Vision App · v2.2.0  │
 ├─────────────────────────────────────────────────────────────┤
 │  📋 Log                                       [Clear]      │
-│  [14:23:01] [INFO] 设备已连接                              │
-│  [14:23:01] [INFO] 识别到内容: https://github.com          │
+│  [14:23:01] [INFO] 识别到内容: https://github.com           │
 └─────────────────────────────────────────────────────────────┘
 ```
 
@@ -66,10 +105,10 @@
 1. **Select Source** – Choose "Local Camera" or "Network Stream"  
 2. **Configure** – For network, enter IP address and port  
 3. **Connect** – Establish video stream connection  
-4. **Choose Mode** – Select processing algorithm: Canny / Sobel / Laplacian / Binary / Contour / QR-Barcode / Color Detection / Template Matching  
-5. **Process** – Real-time image processing + face detection, with FPS and timing stats  
+4. **Choose Mode** – Pick one of 11 processing algorithms  
+5. **Process** – Real-time processing + face detection, with FPS and timing stats  
 6. **Adjust** – Fine-tune Canny thresholds and re-apply (for Canny / Contour modes)  
-7. **Scan / Detect / Match** – Point the camera at a QR code, colored object, or a loaded template  
+7. **Scan / Detect / Match** – Point the camera at a QR code, colored object, shape, or a loaded template  
 8. **Save** – Take screenshots or record video at any time  
 9. **Load Image** – Offline analysis from image files
 
@@ -95,12 +134,12 @@ The app automatically constructs the MJPEG URL and starts streaming.
 
 ```
 MachineVisionApp/
-├── App.xaml / App.xaml.cs          # Application entry & global styles
+├── App.xaml / App.xaml.cs          # Application entry & default culture (en-US)
 ├── MainWindow.xaml / .cs           # Main UI & event orchestration
 ├── TranslationService.cs           # i18n singleton with INotifyPropertyChanged
 ├── AppLogger.cs                    # Logging service (singleton)
 ├── Resources/
-│   ├── Strings.resx                # Chinese resource strings (default)
+│   ├── Strings.resx                # Chinese resource strings (fallback)
 │   └── Strings.en.resx             # English resource strings
 ├── Components/
 │   ├── VideoCaptureComponent.cs    # Camera source (local + network)
@@ -116,8 +155,9 @@ MachineVisionApp/
 │   ├── RecordingComponent.cs       # AVI video recording via VideoWriter
 │   └── ThresholdParameterComponent # Canny threshold UI logic
 ├── Views/
-│   ├── CustomTitleBar.xaml / .cs   # Custom window chrome + lang switch
+│   ├── CustomTitleBar.xaml / .cs   # Custom window chrome + language switch
 ├── TestImages/                     # Sample test images (scene, templates, face photo)
+├── docs/images/                    # Screenshots used by this README
 └── haarcascade_frontalface_default.xml
 ```
 
@@ -130,7 +170,7 @@ MachineVisionApp/
 | `ImageProcessingComponent` | 5 classic modes: Canny, Sobel, Laplacian, Binary Threshold, Contour Detection |
 | `FaceDetectionComponent` | `DetectMultiScale` + histogram equalization preprocessing + bounding box rendering |
 | `BarcodeDetectionComponent` | ZXing.Net decoding of QR/DataMatrix/EAN/UPC/Code128/Code39, frame-throttled with result caching |
-| `ColorDetectionComponent` | HSV `InRange` masks + morphology + contour counting for 9 preset target colors, plus click-to-pick custom sampling |
+| `ColorDetectionComponent` | HSV `InRange` masks + morphology + contour counting for 9 preset colors, plus click-to-pick custom sampling |
 | `TemplateMatchComponent` | `MatchTemplate` (CCoeffNormed) with threshold gating and score overlay |
 | `ShapeDetectionComponent` | Canny + contour polygon approximation + circularity analysis, classifies circles/rects/triangles/pentagons/polygons |
 | `FeatureMatchComponent` | ORB keypoints + BFMatcher ratio test + RANSAC homography, draws perspective detection box |
@@ -144,8 +184,7 @@ MachineVisionApp/
 
 ## 🌍 Internationalization
 
-- Default language is **Chinese**
-- Click **中/EN** in the title bar to toggle between Chinese and English
+- Default language is **English** (click **中/EN** in the title bar to switch to Chinese)
 - All UI strings are managed via `.resx` resource files
 - To add a new language: copy `Strings.en.resx`, rename to `Strings.xx.resx`, translate values
 
@@ -153,7 +192,7 @@ MachineVisionApp/
 
 ## 🛠 Requirements
 
-- ✅ [.NET 8 SDK](https://dotnet.microsoft.com/en-us/download)
+- ✅ [.NET 8 SDK](https://dotnet.microsoft.com/en-us/download) (build only; the release package below is self-contained)
 - ✅ Windows 10/11 with WPF support
 - ✅ NuGet Packages (restored automatically):
   - `OpenCvSharp4` – OpenCV bindings
@@ -164,6 +203,16 @@ MachineVisionApp/
 ---
 
 ## 🚀 Getting Started
+
+### Download (no build required)
+
+Grab the latest self-contained package from [Releases](../../releases/latest):
+
+1. Download `MachineVisionApp-win-x64-vX.Y.Z.zip`
+2. Extract to any folder
+3. Run `MachineVisionApp.exe`
+
+### Build from source
 
 ```bash
 # Clone the repository
@@ -179,6 +228,17 @@ dotnet run --project MachineVisionApp/MachineVisionApp.csproj
 ```
 
 Or open `MachineVisionApp.sln` in Visual Studio 2022 and press **F5**.
+
+### Try it with the bundled test images
+
+Open `TestImages/` in the Load Image dialog:
+
+| Image | What to test |
+|-------|--------------|
+| `test_scene.png` | All processing modes — edges, contours, shapes, colors, QR/barcode (`https://github.com/xianshi3/machine-vision-app`) |
+| `template_green.png` | Template Matching (green square, score ≈ 1.0) |
+| `template_qr.png` | Feature Matching (texture-rich QR crop) |
+| `face_lena.jpg` | Face Detection |
 
 ---
 
