@@ -205,17 +205,26 @@ namespace MachineVisionApp.Components
                     continue;
                 }
 
-                // 读取一帧
-                bool readSuccess = _capture.Read(_frame);
-                if (!readSuccess || _frame.Empty())
+                try
                 {
-                    await Task.Delay(100);
-                    continue;
-                }
+                    // 读取一帧
+                    bool readSuccess = _capture.Read(_frame);
+                    if (!readSuccess || _frame.Empty())
+                    {
+                        await Task.Delay(100);
+                        continue;
+                    }
 
-                // 转灰度后触发回调
-                Cv2.CvtColor(_frame, _grayFrame, ColorConversionCodes.BGR2GRAY);
-                OnFrameCaptured?.Invoke(_frame, _grayFrame);
+                    // 转灰度后触发回调
+                    Cv2.CvtColor(_frame, _grayFrame, ColorConversionCodes.BGR2GRAY);
+                    OnFrameCaptured?.Invoke(_frame, _grayFrame);
+                }
+                catch (Exception ex)
+                {
+                    // 摄像头异常断开/驱动错误：上报错误并退出循环
+                    OnCaptureError?.Invoke(TranslationService.GetStringStatic("CameraError") + $": {ex.Message}");
+                    break;
+                }
 
                 await Task.Delay(30); // ~33 FPS 上限
             }
