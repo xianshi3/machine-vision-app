@@ -653,15 +653,22 @@ namespace MachineVisionApp
                     _lastOriginalFrame = originalFrame.Clone();
                 }
 
-                Mat edges = ProcessByMode(originalFrame, grayFrame, out int contourCount, out string modeResult);
-
-                int faceCount = _faceDetectionComponent.DetectFaces(grayFrame, originalFrame);
-
-                _imageDisplayComponent.UpdateImages(originalFrame, edges, _threshold1, _threshold2);
-
-                if (_recordingComponent.IsRecording)
+                Mat resultImage = ProcessByMode(originalFrame, grayFrame, out int contourCount, out string modeResult);
+                int faceCount = 0;
+                try
                 {
-                    _recordingComponent.WriteFrame(originalFrame);
+                    faceCount = _faceDetectionComponent.DetectFaces(grayFrame, originalFrame);
+
+                    _imageDisplayComponent.UpdateImages(originalFrame, resultImage, _threshold1, _threshold2);
+
+                    if (_recordingComponent.IsRecording)
+                    {
+                        _recordingComponent.WriteFrame(originalFrame);
+                    }
+                }
+                finally
+                {
+                    resultImage.Dispose();
                 }
 
                 _frameStopwatch.Stop();
@@ -699,8 +706,11 @@ namespace MachineVisionApp
             }
             catch (Exception ex)
             {
-                ShowError(TranslationService.GetStringStatic("FrameProcessError") + $": {ex.Message}");
-                AppLogger.Instance.Error($"帧处理异常: {ex.Message}");
+                Dispatcher.Invoke(() =>
+                {
+                    ShowError(TranslationService.GetStringStatic("FrameProcessError") + $": {ex.Message}");
+                    AppLogger.Instance.Error($"帧处理异常: {ex.Message}");
+                });
             }
         }
 
@@ -727,13 +737,14 @@ namespace MachineVisionApp
                     Mat image = Cv2.ImRead(openFileDialog.FileName);
                     if (image.Empty())
                     {
+                        image.Dispose();
                         ShowError(TranslationService.GetStringStatic("FailedLoadImage"));
                         return;
                     }
 
-                    Mat grayImage = new Mat();
+                    using Mat grayImage = new Mat();
                     Cv2.CvtColor(image, grayImage, ColorConversionCodes.BGR2GRAY);
-                    Mat edges = ProcessByMode(image, grayImage, out int contourCount, out string modeResult);
+                    using Mat edges = ProcessByMode(image, grayImage, out int contourCount, out string modeResult);
                     int faceCount = _faceDetectionComponent.DetectFaces(grayImage, image);
                     _imageDisplayComponent.UpdateImages(image, edges, _threshold1, _threshold2);
                     FaceCountTextBlock.Text = $"{faceCount}";
@@ -752,6 +763,7 @@ namespace MachineVisionApp
                     // 更新最近帧引用，供颜色检测取色使用
                     _lastOriginalFrame?.Dispose();
                     _lastOriginalFrame = image.Clone();
+                    image.Dispose();
 
                     AppLogger.Instance.Info($"已加载图片: {openFileDialog.FileName}");
                 }

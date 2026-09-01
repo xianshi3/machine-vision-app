@@ -13,6 +13,7 @@ namespace MachineVisionApp.Components
     public class FeatureMatchComponent
     {
         private readonly ORB _orb = ORB.Create(1500);   // ORB 特征检测器
+        private readonly BFMatcher _matcher = new(NormTypes.Hamming, false); // 暴力匹配器（复用）
         private Mat? _template;                          // 模板原图
         private Mat? _templateDescriptors;               // 模板描述子
         private KeyPoint[] _templateKeypoints = Array.Empty<KeyPoint>();
@@ -83,8 +84,7 @@ namespace MachineVisionApp.Components
             _orb.DetectAndCompute(grayFrame, null, out var frameKeypoints, frameDescriptors);
 
             // 暴力匹配 + 最近邻/次近邻比率测试
-            var matcher = new BFMatcher(NormTypes.Hamming, false);
-            DMatch[][] knnMatches = matcher.KnnMatch(_templateDescriptors, frameDescriptors, 2, null, false);
+            DMatch[][] knnMatches = _matcher.KnnMatch(_templateDescriptors, frameDescriptors, 2, null, false);
 
             var goodMatches = new List<DMatch>();
             var srcPoints = new List<Point2f>();
